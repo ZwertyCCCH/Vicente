@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ejercicios de Potencias | Academia CienciaPlus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #111827 100%);
+            color: #F3F4F6;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .app-container { display: flex; height: 100vh; flex-direction: row; }
+        .indicators-panel {
+            width: 100px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 10px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+        .indicators-title { font-size: 0.8rem; color: #94A3B8; margin-bottom: 20px; text-align: center; }
+        .indicators-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .indicator {
+            width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: all 0.2s; background: #F59E0B; color: #1E293B;
+        }
+        .indicator.answered { background: #3B82F6; color: white; }
+        .indicator:hover { transform: scale(1.1); box-shadow: 0 0 0 2px rgba(59,130,246,0.5); }
+        .slides-container { flex: 1; height: 100vh; overflow-y: auto; scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+        .slide { scroll-snap-align: start; min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 60px 40px; }
+        .question-card {
+            max-width: 900px; width: 100%; background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px); border-radius: 48px; padding: 40px;
+            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .question-text { font-size: 1.4rem; font-weight: 500; margin-bottom: 30px; line-height: 1.5; color: #F1F5F9; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px; }
+        .option { display: flex; align-items: center; gap: 15px; padding: 12px 20px; background: #1E293B; border-radius: 60px; border: 1px solid #334155; cursor: pointer; transition: all 0.2s; }
+        .option:hover { background: #334155; border-color: #3B82F6; }
+        .option input { width: 20px; height: 20px; cursor: pointer; accent-color: #3B82F6; }
+        .option label { flex: 1; cursor: pointer; font-size: 1rem; color: #CBD5E1; }
+        .slide-number { text-align: center; margin-top: 20px; color: #6B7280; font-size: 0.85rem; }
+        .nav-btn {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 60px;
+            padding: 14px 18px; cursor: pointer; z-index: 200;
+            transition: all 0.2s; color: white; font-size: 1.3rem;
+        }
+        .nav-btn:hover { background: #3B82F6; transform: translateY(-50%) scale(1.05); }
+        .nav-left { left: 120px; }
+        .nav-right { right: 30px; }
+        .fixed-buttons {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; gap: 12px; z-index: 300;
+        }
+        .fixed-btn {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 20px; border-radius: 50px; color: #E2E8F0;
+            text-decoration: none; font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+            cursor: pointer;
+        }
+        .fixed-btn:hover { transform: translateY(-3px); background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; }
+        .finish-btn { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .finish-btn:hover { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
+        .results-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto;
+            padding: 40px 20px; display: none;
+        }
+        .results-container { max-width: 1000px; margin: 0 auto; background: #1E293B; border-radius: 48px; padding: 40px; }
+        .results-container h2 { color: #FCD34D; margin-bottom: 20px; }
+        .score-box { background: #0F172A; padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 30px; }
+        .score-box h3 { font-size: 2rem; color: #60A5FA; }
+        .result-question { background: #0F172A; border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 5px solid; }
+        .result-question.correct { border-left-color: #10B981; }
+        .result-question.incorrect { border-left-color: #EF4444; }
+        .explanation { margin-top: 12px; padding: 12px; background: #1E293B; border-radius: 12px; font-size: 0.9rem; color: #FBBF24; }
+        .action-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+        .action-btn { padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; }
+        .restart-btn { background: #10B981; color: white; }
+        .restart-btn:hover { background: #059669; transform: scale(1.02); }
+        .math-btn { background: #3B82F6; color: white; }
+        .math-btn:hover { background: #2563EB; transform: scale(1.02); }
+        .powers-btn { background: #8B5CF6; color: white; }
+        .powers-btn:hover { background: #7C3AED; transform: scale(1.02); }
+        @media (max-width: 768px) {
+            .indicators-panel { width: 70px; }
+            .indicator { width: 35px; height: 35px; font-size: 0.8rem; }
+            .nav-left { left: 85px; }
+            .question-card { padding: 25px; }
+            .question-text { font-size: 1.1rem; }
+        }
+        .katex-display { overflow-x: auto; overflow-y: hidden; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="indicators-panel">
+            <div class="indicators-title">Preguntas</div>
+            <div class="indicators-grid" id="indicatorsGrid"></div>
+        </div>
+        <div class="slides-container" id="slidesContainer"></div>
+    </div>
+
+    <div class="nav-btn nav-left" id="prevBtn"><i class="fas fa-chevron-left"></i></div>
+    <div class="nav-btn nav-right" id="nextBtn"><i class="fas fa-chevron-right"></i></div>
+    <div class="fixed-buttons">
+        <div class="fixed-btn finish-btn" id="finishBtn"><i class="fas fa-check-circle"></i> Finalizar</div>
+    </div>
+
+    <div class="results-overlay" id="resultsOverlay">
+        <div class="results-container" id="resultsContainer"></div>
+    </div>
+
+    <script>
+        function renderKatexInElement(element) {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
+        }
+
+        // ============================================
+        // POOL DE 100 PREGUNTAS SOBRE POTENCIAS
+        // ============================================
+        const questionPool = [
+            { text: "Calcular: $10^0 + 10^1$", options: ["10", "11", "$10^1$", "2", "100"], correct: 1, explanation: "$10^0 = 1$ y $10^1 = 10$; $1 + 10 = 11$" },
+            { text: "Calcular: $2^3 \\times 2^4$", options: ["$2^7$", "$2^{12}$", "$4^7$", "$2^1$", "$2^3$"], correct: 0, explanation: "$2^{3+4} = 2^7 = 128$" },
+            { text: "Simplificar: $\\frac{5^7}{5^4}$", options: ["$5^3$", "$5^{11}$", "$5^{28}$", "$5^4$", "$5^2$"], correct: 0, explanation: "$5^{7-4} = 5^3 = 125$" },
+            { text: "Resolver: $(3^4)^2$", options: ["$3^6$", "$3^8$", "$3^{16}$", "$9^8$", "$3^2$"], correct: 1, explanation: "$3^{4 \\times 2} = 3^8 = 6561$" },
+            { text: "Calcular: $(-2)^6$", options: ["64", "-64", "32", "-32", "12"], correct: 0, explanation: "$(-2)^6 = 64$" },
+            { text: "Calcular: $(-5)^3$", options: ["125", "-125", "25", "-25", "15"], correct: 1, explanation: "$(-5)^3 = -125$" },
+            { text: "Simplificar: $2^{-4}$", options: ["$\\frac{1}{16}$", "-16", "16", "$\\frac{1}{8}$", "-8"], correct: 0, explanation: "$2^{-4} = \\frac{1}{2^4} = \\frac{1}{16}$" },
+            { text: "Calcular: $9^0$", options: ["0", "1", "9", "-9", "Indeterminado"], correct: 1, explanation: "$9^0 = 1$" },
+            { text: "Simplificar: $(3y)^4$", options: ["$3y^4$", "$81y^4$", "$12y$", "$81y$", "$3^4y^4$"], correct: 1, explanation: "$3^4 \\cdot y^4 = 81y^4$" },
+            { text: "Resolver: $\\left(\\frac{3}{5}\\right)^2$", options: ["$\\frac{9}{25}$", "$\\frac{6}{10}$", "$\\frac{9}{10}$", "$\\frac{6}{25}$", "$\\frac{3}{25}$"], correct: 0, explanation: "$\\frac{3^2}{5^2} = \\frac{9}{25}$" },
+            { text: "Calcular: $10^4 \\times 10^{-2}$", options: ["$10^2$", "$10^6$", "$10^{-8}$", "$10^8$", "$10^0$"], correct: 0, explanation: "$10^{4-2} = 10^2 = 100$" },
+            { text: "Simplificar: $\\frac{6^6}{6^2}$", options: ["$6^3$", "$6^4$", "$6^8$", "$6^{12}$", "$6^2$"], correct: 1, explanation: "$6^{6-2} = 6^4 = 1296$" },
+            { text: "Resolver: $(7^3)^4$", options: ["$7^7$", "$7^{12}$", "$7^{64}$", "$7^{81}$", "$7^{3/4}$"], correct: 1, explanation: "$7^{3 \\times 4} = 7^{12}$" },
+            { text: "Calcular: $0^8$", options: ["0", "1", "8", "Indeterminado", "0"], correct: 0, explanation: "$0^8 = 0$" },
+            { text: "Calcular: $(-1)^{24}$", options: ["1", "-1", "24", "-24", "0"], correct: 0, explanation: "$(-1)^{24} = 1$" },
+            { text: "Simplificar: $\\frac{x^9}{x^5}$", options: ["$x^{14}$", "$x^4$", "$x^{45}$", "$x^{9/5}$", "$x^{5/9}$"], correct: 1, explanation: "$x^{9-5} = x^4$" },
+            { text: "Resolver: $4^{-3}$", options: ["$\\frac{1}{64}$", "-64", "64", "$\\frac{1}{12}$", "-12"], correct: 0, explanation: "$4^{-3} = \\frac{1}{4^3} = \\frac{1}{64}$" },
+            { text: "Calcular: $1^{250}$", options: ["1", "250", "0", "-1", "2"], correct: 0, explanation: "$1^{250} = 1$" },
+            { text: "Simplificar: $(xy)^5$", options: ["$x^5y^5$", "$xy^5$", "$x^5y$", "$x^5 + y^5$", "1"], correct: 0, explanation: "$x^5 \\cdot y^5$" },
+            { text: "Resolver: $\\left(\\frac{2}{7}\\right)^{-2}$", options: ["$\\frac{49}{4}$", "$\\frac{4}{49}$", "$-\\frac{4}{49}$", "$-\\frac{49}{4}$", "$\\frac{14}{4}$"], correct: 0, explanation: "$\\left(\\frac{7}{2}\\right)^2 = \\frac{49}{4}$" },
+            { text: "Calcular: $3^4 \\div 3^2$", options: ["$3^2$", "$3^6$", "$3^8$", "$9^2$", "$3^2$"], correct: 0, explanation: "$3^{4-2} = 3^2 = 9$" },
+            { text: "Simplificar: $(a^4)^6$", options: ["$a^{10}$", "$a^{24}$", "$a^{4096}$", "$a^{4/6}$", "$a^{6/4}$"], correct: 1, explanation: "$a^{4 \\times 6} = a^{24}$" },
+            { text: "Calcular: $(-7)^2$", options: ["49", "-49", "14", "-14", "0"], correct: 0, explanation: "$(-7)^2 = 49$" },
+            { text: "Resolver: $12^0$", options: ["0", "1", "12", "-12", "Indeterminado"], correct: 1, explanation: "$12^0 = 1$" },
+            { text: "Simplificar: $\\frac{8^9}{8^6}$", options: ["$8^3$", "$8^{15}$", "$8^{54}$", "$8^{1.5}$", "$8^6$"], correct: 0, explanation: "$8^{9-6} = 8^3 = 512$" },
+            { text: "Calcular: $(4 \\times 5)^2$", options: ["400", "$4^2+5^2$", "$20^2$", "200", "100"], correct: 0, explanation: "$20^2 = 400$" },
+            { text: "Resolver: $(-1)^{101}$", options: ["1", "-1", "101", "-101", "0"], correct: 1, explanation: "$(-1)^{101} = -1$" },
+            { text: "Calcular: $2^3 + 2^4$", options: ["$2^7$", "24", "$2^{12}$", "$2^{3\\times4}$", "$2^1$"], correct: 1, explanation: "$8 + 16 = 24$" },
+            { text: "Simplificar: $\\frac{9^4}{9^3}$", options: ["$9^1$", "$9^7$", "$9^{12}$", "$3^4$", "$9^1$"], correct: 0, explanation: "$9^{4-3} = 9^1 = 9$" },
+            { text: "Resolver: $(4a)^2$", options: ["$4a^2$", "$16a^2$", "$8a$", "$16a$", "$4a^2$"], correct: 1, explanation: "$16a^2$" },
+            { text: "Calcular: $\\left(\\frac{1}{3}\\right)^{-2}$", options: ["$\\frac{1}{9}$", "9", "-9", "$\\frac{1}{6}$", "6"], correct: 1, explanation: "$3^2 = 9$" },
+            { text: "Simplificar: $b^8 \\times b^3$", options: ["$b^{24}$", "$b^{11}$", "$b^{8/3}$", "$b^{3/8}$", "$b^5$"], correct: 1, explanation: "$b^{8+3} = b^{11}$" },
+            { text: "Resolver: $(2^3)^2 + 2^4$", options: ["$2^8$", "80", "$2^5$", "$2^7$", "$2^{10}$"], correct: 1, explanation: "$64 + 16 = 80$" },
+            { text: "Calcular: $(-4)^4$", options: ["-256", "256", "16", "-16", "64"], correct: 1, explanation: "$(-4)^4 = 256$" },
+            { text: "Simplificar: $\\frac{7^8}{7^5}$", options: ["$7^3$", "$7^{13}$", "$7^{40}$", "$7^{8/5}$", "$7^{5/8}$"], correct: 0, explanation: "$7^{8-5} = 7^3 = 343$" },
+            { text: "Resolver: $(x^3 y^2)^4$", options: ["$x^7 y^6$", "$x^{12} y^{8}$", "$x^{81} y^{16}$", "$x^3 y^2$", "$x^{12} y^{8}$"], correct: 1, explanation: "$x^{12} y^{8}$" },
+            { text: "Calcular: $2^4 \\times 2^{-3}$", options: ["$2^1$", "$2^7$", "$2^{-12}$", "$2^4$", "$2^{-7}$"], correct: 0, explanation: "$2^{4-3} = 2^1 = 2$" },
+            { text: "Resolver: $\\left(\\frac{4}{3}\\right)^3$", options: ["$\\frac{64}{27}$", "$\\frac{12}{9}$", "$\\frac{16}{9}$", "$\\frac{8}{6}$", "64"], correct: 0, explanation: "$\\frac{64}{27}$" },
+            { text: "Calcular: $(-6)^3$", options: ["216", "-216", "36", "-36", "-18"], correct: 1, explanation: "$(-6)^3 = -216$" },
+            { text: "Simplificar: $\\frac{2^5 \\times 2^3}{2^2}$", options: ["$2^6$", "$2^{10}$", "$2^{30}$", "$2^6$", "$2^4$"], correct: 0, explanation: "$2^{5+3-2} = 2^6 = 64$" },
+            { text: "Calcular: $3^2 + 3^3$", options: ["$3^5$", "36", "$3^6$", "27", "9"], correct: 1, explanation: "$9 + 27 = 36$" },
+            { text: "Resolver: $\\left(\\frac{2}{3}\\right)^{-3}$", options: ["$\\frac{8}{27}$", "$\\frac{27}{8}$", "$-\\frac{8}{27}$", "$-\\frac{27}{8}$", "$\\frac{6}{9}$"], correct: 1, explanation: "$\\left(\\frac{3}{2}\\right)^3 = \\frac{27}{8}$" },
+            { text: "Simplificar: $\\frac{x^8}{x^2}$", options: ["$x^6$", "$x^{10}$", "$x^{16}$", "$x^4$", "$x^{8/2}$"], correct: 0, explanation: "$x^{8-2} = x^6$" },
+            { text: "Calcular: $(-2)^5$", options: ["32", "-32", "16", "-16", "10"], correct: 1, explanation: "$(-2)^5 = -32$" },
+            { text: "Resolver: $5^0 + 5^1$", options: ["0", "1", "6", "5", "10"], correct: 2, explanation: "$1 + 5 = 6$" },
+            { text: "Simplificar: $(2^2)^3$", options: ["$2^5$", "$2^6$", "$2^8$", "$2^9$", "$2^1$"], correct: 1, explanation: "$2^{2 \\times 3} = 2^6 = 64$" },
+            { text: "Calcular: $\\frac{10^5}{10^3}$", options: ["$10^2$", "$10^8$", "$10^{15}$", "$10^{5/3}$", "$10^2$"], correct: 0, explanation: "$10^{5-3} = 10^2 = 100$" },
+            { text: "Resolver: $(3 \\times 2)^4$", options: ["$3^4 \\times 2^4$", "$6^4$", "1296", "Todas las anteriores", "0"], correct: 3, explanation: "$6^4 = 1296$ y $3^4 \\times 2^4 = 81 \\times 16 = 1296$" },
+            { text: "Calcular: $(-1)^{50} + (-1)^{51}$", options: ["2", "0", "-2", "1", "-1"], correct: 1, explanation: "$1 + (-1) = 0$" },
+            { text: "Simplificar: $\\frac{2^{10}}{2^6}$", options: ["$2^4$", "$2^{16}$", "$2^{60}$", "$2^{10/6}$", "$2^4$"], correct: 0, explanation: "$2^{10-6} = 2^4 = 16$" },
+            { text: "Resolver: $(a^5)^3$", options: ["$a^8$", "$a^{15}$", "$a^{125}$", "$a^{5/3}$", "$a^{3/5}$"], correct: 1, explanation: "$a^{5 \\times 3} = a^{15}$" },
+            { text: "Calcular: $\\left(\\frac{1}{2}\\right)^{-4}$", options: ["$\\frac{1}{16}$", "16", "-16", "$\\frac{1}{8}$", "8"], correct: 1, explanation: "$2^4 = 16$" },
+            { text: "Simplificar: $\\frac{3^5 \\times 3^2}{3^4}$", options: ["$3^3$", "$3^7$", "$3^{11}$", "$3^{40}$", "$3^1$"], correct: 0, explanation: "$3^{5+2-4} = 3^3 = 27$" },
+            { text: "Calcular: $(-3)^2 + (-2)^3$", options: ["17", "1", "-1", "-17", "19"], correct: 1, explanation: "$9 + (-8) = 1$" },
+            { text: "Resolver: $(2x^2)^3$", options: ["$2x^6$", "$8x^6$", "$6x^5$", "$8x^5$", "$2x^5$"], correct: 1, explanation: "$2^3 \\cdot x^{2 \\times 3} = 8x^6$" },
+            { text: "Calcular: $4^3 \\div 4^1$", options: ["$4^2$", "$4^3$", "$4^4$", "$4^{-2}$", "$4^1$"], correct: 0, explanation: "$4^{3-1} = 4^2 = 16$" },
+            { text: "Simplificar: $(\\frac{a}{b})^{-3}$", options: ["$\\frac{a^3}{b^3}$", "$\\frac{b^3}{a^3}$", "$-\\frac{a^3}{b^3}$", "$-\\frac{b^3}{a^3}$", "$\\frac{a^{-3}}{b^{-3}}$"], correct: 1, explanation: "$\\left(\\frac{b}{a}\\right)^3 = \\frac{b^3}{a^3}$" },
+            { text: "Calcular: $2^5 - 2^3$", options: ["$2^2$", "20", "$2^{15}$", "32", "24"], correct: 4, explanation: "$32 - 8 = 24$" },
+            { text: "Resolver: $3^{x} = 81$, $x = ?$", options: ["2", "3", "4", "5", "6"], correct: 2, explanation: "$81 = 3^4$, entonces $x = 4$" },
+            { text: "Simplificar: $\\frac{2^{n+2}}{2^n}$", options: ["$2^2$", "$2^{2n}$", "$2^{n+2}$", "$2^{n}$", "4"], correct: 0, explanation: "$2^{(n+2)-n} = 2^2 = 4$" },
+            { text: "Calcular: $\\sqrt[3]{27}^2$", options: ["3", "6", "9", "27", "81"], correct: 2, explanation: "$\\sqrt[3]{27} = 3$, $3^2 = 9$" },
+            { text: "Resolver: $(-2)^{-3} \\times (-2)^5$", options: ["$2$", "$(-2)^{-15}$", "$-2$", "$-4$", "$4$"], correct: 4, explanation: "$(-2)^{-3+5} = (-2)^2 = 4$" },
+            { text: "Simplificar: $(3^2)^3 \\div 3^4$", options: ["$3^2$", "$3^6$", "$3^{10}$", "$3^{20}$", "$3^1$"], correct: 0, explanation: "$3^6 \\div 3^4 = 3^{6-4} = 3^2 = 9$" },
+            { text: "Calcular: $7^3 \\times 7^{-1}$", options: ["$7^2$", "$7^4$", "$7^{-3}$", "$7^3$", "$7^1$"], correct: 0, explanation: "$7^{3-1} = 7^2 = 49$" },
+            { text: "Resolver: $(\\frac{2}{3})^3 \\times (\\frac{3}{2})^2$", options: ["$\\frac{2}{3}$", "$\\frac{3}{2}$", "$\\frac{8}{27}$", "$\\frac{9}{4}$", "$\\frac{2}{3}$"], correct: 0, explanation: "$\\frac{8}{27} \\times \\frac{9}{4} = \\frac{72}{108} = \\frac{2}{3}$" },
+            { text: "Simplificar: $\\frac{x^{10}}{x^4 \\times x^3}$", options: ["$x^3$", "$x^7$", "$x^{13}$", "$x^{120}$", "$x^3$"], correct: 0, explanation: "$x^{10} \\div x^{7} = x^{3}$" },
+            { text: "Calcular: $(-5)^0 + (-5)^2$", options: ["1", "18", "25", "20", "26"], correct: 4, explanation: "$1 + 25 = 26$" },
+            { text: "Resolver: $2^{2x} = 64$, $x = ?$", options: ["2", "3", "4", "5", "6"], correct: 1, explanation: "$64 = 2^6$, $2x = 6$, $x = 3$" },
+            { text: "Simplificar: $(a^2b^3)^4$", options: ["$a^6b^7$", "$a^8b^{12}$", "$a^{16}b^{81}$", "$a^2b^3$", "$a^8b^{12}$"], correct: 1, explanation: "$a^{2\\times4}b^{3\\times4} = a^8b^{12}$" },
+            { text: "Calcular: $\\frac{9^5}{9^2}$", options: ["$9^3$", "$9^7$", "$9^{10}$", "$9^{2.5}$", "$9^3$"], correct: 0, explanation: "$9^{5-2} = 9^3 = 729$" },
+            { text: "Resolver: $(2^2)^2 \\times 2^3$", options: ["$2^7$", "$2^{12}$", "$2^{10}$", "$2^5$", "$2^8$"], correct: 0, explanation: "$2^4 \\times 2^3 = 2^{4+3} = 2^7$" },
+            { text: "Calcular: $\\left(\\frac{1}{5}\\right)^{-2}$", options: ["$\\frac{1}{25}$", "25", "-25", "$\\frac{1}{10}$", "10"], correct: 1, explanation: "$5^2 = 25$" },
+            { text: "Simplificar: $\\frac{6^n \\times 6^3}{6^{n-1}}$", options: ["$6^4$", "$6^{2n+3}$", "$6^{n+4}$", "$6^{n+3}$", "$6^6$"], correct: 0, explanation: "$6^{n+3-(n-1)} = 6^{4} = 1296$" },
+            { text: "Calcular: $(-3)^3 + (-3)^2$", options: ["-18", "-18", "36", "-36", "36"], correct: 0, explanation: "$-27 + 9 = -18$" },
+            { text: "Resolver: $4^{x-1} = 16$, $x = ?$", options: ["2", "3", "4", "1", "5"], correct: 1, explanation: "$4^{x-1} = 4^2$, $x-1=2$, $x=3$" },
+            { text: "Simplificar: $\\frac{(2^3)^2 \\times 2^5}{2^4}$", options: ["$2^6$", "$2^{15}$", "$2^{20}$", "$2^{10}$", "$2^7$"], correct: 4, explanation: "$2^{6+5-4} = 2^7$" },
+            { text: "Calcular: $\\sqrt[4]{16}^3$", options: ["2", "4", "8", "16", "64"], correct: 2, explanation: "$\\sqrt[4]{16} = 2$, $2^3 = 8$" },
+            { text: "Resolver: $(\\frac{3}{4})^{-2} \\times (\\frac{3}{4})^{3}$", options: ["$\\frac{3}{4}$", "$\\frac{4}{3}$", "$\\frac{9}{16}$", "$\\frac{27}{64}$", "$\\frac{3}{4}$"], correct: 4, explanation: "$(\\frac{3}{4})^{1} = \\frac{3}{4}$" },
+            { text: "Calcular: $2^{10} \\div 2^8$", options: ["$2^2$", "$2^{18}$", "$2^{80}$", "$2^{10/8}$", "$2^{4}$"], correct: 0, explanation: "$2^{10-8} = 2^2 = 4$" },
+            { text: "Simplificar: $(5x^2)^3$", options: ["$5x^6$", "$125x^6$", "$15x^5$", "$125x^5$", "$5x^5$"], correct: 1, explanation: "$5^3 \\cdot x^{2\\times3} = 125x^6$" },
+            { text: "Resolver: $(-2)^{-2} \\times (-2)^4$", options: ["$(-2)^4$", "$(-2)^{-8}$", "$(-2)^6$", "4", "$-4$"], correct: 3, explanation: "$(-2)^{-2+4} = (-2)^2 = 4$" },
+            { text: "Calcular: $3^2 \\times 3^0 \\times 3^{-1}$", options: ["$3^1$", "$3^2$", "$3^{-2}$", "$3^3$", "$3^-1$"], correct: 3, explanation: "$3^{2+0-1} = 3^1 = 3$" },
+            { text: "Simplificar: $\\frac{a^{2n} \\times a^n}{a^{3n}}$", options: ["$a^0$", "$a^{6n}$", "$a^{5n}$", "$a^{2n}$", "1"], correct: 0, explanation: "$a^{2n+n-3n} = a^0 = 1$" },
+            { text: "Calcular: $(\\frac{1}{2})^2 + (\\frac{1}{2})^3$", options: ["$\\frac{5}{8}$", "$\\frac{1}{8}$", "$\\frac{1}{4}$", "$\\frac{1}{2}$", "$\\frac{3}{8}$"], correct: 4, explanation: "$\\frac{1}{4} + \\frac{1}{8} = \\frac{2}{8} + \\frac{1}{8} = \\frac{3}{8}$" },
+            { text: "Resolver: $2^{x+1} = 32$, $x = ?$", options: ["3", "4", "5", "2", "6"], correct: 1, explanation: "$2^{x+1} = 2^5$, $x+1=5$, $x=4$" },
+            { text: "Simplificar: $(\\frac{2}{3})^{-3} \\div (\\frac{2}{3})^{-2}$", options: ["$\\frac{2}{3}$", "$\\frac{5}{2}$", "$\\frac{3}{2}$", "$\\frac{243}{32}$", "$\\frac{3}{2}$"], correct: 2, explanation: "$(\\frac{2}{3})^{-3-(-2)} = (\\frac{2}{3})^{-1} = \\frac{3}{2}$" },
+            { text: "Calcular: $(-1)^{100} - (-1)^{99}$", options: ["-2", "0", "-1", "2", "1"], correct: 3, explanation: "$1 - (-1) = 1 + 1 = 2$" },
+            { text: "Calcular: $2^2 \\times 2^3 \\times 2^{-1}$", options: ["$2^4$", "$2^5$", "$2^6$", "$2^2$", "$16$"], correct: 0, explanation: "$2^{2+3-1} = 2^4 = 16$" },
+            { text: "Resolver: $(\\frac{5}{2})^{-2} \\times (\\frac{5}{2})^4$", options: ["$(\\frac{5}{2})^2$", "$(\\frac{5}{2})^6$", "$(\\frac{5}{2})^{-8}$", "$\\frac{25}{4}$", "$6.25$"], correct: 3, explanation: "$(\\frac{5}{2})^{-2+4} = (\\frac{5}{2})^2 = \\frac{25}{4} = 6.25$" },
+            { text: "Simplificar: $\\frac{3^{n+1}}{3^{n-1}}$", options: ["$3^2$", "$3^{2n}$", "$3^{n+2}$", "$3^{n-2}$", "9"], correct: 0, explanation: "$3^{(n+1)-(n-1)} = 3^{2} = 9$" }
+        ];
+
+        function getRandomQuestions(pool, count) {
+            const shuffled = [...pool];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, count);
+        }
+
+        let questions = [];
+        let userAnswers = [];
+        let testFinished = false;
+
+        function renderIndicators() {
+            const grid = document.getElementById('indicatorsGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator';
+                if (userAnswers[i] !== null) indicator.classList.add('answered');
+                indicator.textContent = i + 1;
+                indicator.addEventListener('click', (function(idx) {
+                    return function() {
+                        const slide = document.getElementById(`slide-${idx}`);
+                        if (slide) slide.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    };
+                })(i));
+                grid.appendChild(indicator);
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('slidesContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide';
+                slideDiv.id = `slide-${i}`;
+                slideDiv.innerHTML = `
+                    <div class="question-card">
+                        <div class="question-text">${i+1}. ${q.text}</div>
+                        <div class="options" id="options-${i}">
+                            ${q.options.map((opt, idx) => `
+                                <div class="option" data-opt-index="${idx}">
+                                    <input type="radio" name="q${i}" id="q${i}_opt${idx}" value="${idx}" ${userAnswers[i] === idx ? 'checked' : ''} ${testFinished ? 'disabled' : ''}>
+                                    <label for="q${i}_opt${idx}">${String.fromCharCode(65+idx)}) ${opt}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="slide-number">Pregunta ${i+1} de ${questions.length}</div>
+                    </div>
+                `;
+                container.appendChild(slideDiv);
+                if (!testFinished) {
+                    const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                    radios.forEach(radio => {
+                        radio.addEventListener('change', (e) => {
+                            if (!testFinished) {
+                                userAnswers[i] = parseInt(e.target.value);
+                                renderIndicators();
+                            }
+                        });
+                    });
+                }
+            }
+            renderKatexInElement(container);
+        }
+
+        function calculateGrade(correctCount, total) {
+            const percentCorrect = correctCount / total;
+            if (percentCorrect <= 0.6) return 1 + (percentCorrect / 0.6) * 3;
+            else return 4 + ((percentCorrect - 0.6) / 0.4) * 3;
+        }
+
+        function finishExam() {
+            if (testFinished) return;
+            testFinished = true;
+            let correctCount = 0;
+            const results = [];
+            for (let i = 0; i < questions.length; i++) {
+                const isCorrect = (userAnswers[i] === questions[i].correct);
+                if (isCorrect) correctCount++;
+                results.push({
+                    question: questions[i].text,
+                    userAnswer: userAnswers[i],
+                    correctAnswer: questions[i].correct,
+                    isCorrect: isCorrect,
+                    explanation: questions[i].explanation,
+                    options: questions[i].options
+                });
+            }
+            const grade = calculateGrade(correctCount, questions.length);
+            const gradeRounded = Math.round(grade * 10) / 10;
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <h2>📊 Resultados del Test</h2>
+                <div class="score-box">
+                    <p>✅ Respuestas correctas: ${correctCount} / ${questions.length}</p>
+                    <p>📈 Porcentaje: ${percentage}%</p>
+                    <h3>🎓 Nota: ${gradeRounded}</h3>
+                    <p>${gradeRounded >= 4 ? '✨ APROBADO ✨' : '📚 REPROBADO - Sigue practicando 📚'}</p>
+                </div>
+                <div id="detailedResults"></div>
+                <div class="action-buttons">
+                    <button class="action-btn restart-btn" id="restartBtn"><i class="fas fa-sync-alt"></i> Reiniciar Test</button>
+                    <a href="matematicas.html" class="action-btn math-btn"><i class="fas fa-arrow-left"></i> Volver a Matemáticas</a>
+                    <a href="potencias.html" class="action-btn powers-btn"><i class="fas fa-book-open"></i> Repasar Clase</a>
+                </div>
+            `;
+            const detailedDiv = document.getElementById('detailedResults');
+            for (let i = 0; i < results.length; i++) {
+                const r = results[i];
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `result-question ${r.isCorrect ? 'correct' : 'incorrect'}`;
+                const userLetter = r.userAnswer !== null ? String.fromCharCode(65 + r.userAnswer) : '?';
+                const correctLetter = String.fromCharCode(65 + r.correctAnswer);
+                const userAnswerText = r.userAnswer !== null ? r.options[r.userAnswer] : 'No respondida';
+                resultDiv.innerHTML = `
+                    <strong>Pregunta ${i+1}:</strong> ${r.question}<br>
+                    <span>📌 Tu respuesta: ${userLetter}) ${userAnswerText}</span><br>
+                    <span>✅ Respuesta correcta: ${correctLetter}) ${r.options[r.correctAnswer]}</span>
+                    ${!r.isCorrect ? `<div class="explanation">📖 <strong>Desarrollo correcto:</strong><br>${r.explanation}</div>` : '<div class="explanation">✓ ¡Respuesta correcta!</div>'}
+                `;
+                detailedDiv.appendChild(resultDiv);
+            }
+            renderKatexInElement(resultsContainer);
+            document.getElementById('resultsOverlay').style.display = 'block';
+            document.getElementById('restartBtn').addEventListener('click', () => {
+                location.reload();
+            });
+            for (let i = 0; i < questions.length; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            }
+        }
+
+        function initTest() {
+            questions = getRandomQuestions(questionPool, 40);
+            userAnswers = new Array(40).fill(null);
+            testFinished = false;
+            renderQuestions();
+            renderIndicators();
+        }
+
+        let currentSlide = 0;
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+            currentSlide = index;
+            slides[currentSlide]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!testFinished && document.getElementById('resultsOverlay').style.display !== 'block') {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    goToSlide(currentSlide + 1);
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    goToSlide(currentSlide - 1);
+                }
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (!testFinished) goToSlide(currentSlide - 1); });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (!testFinished) goToSlide(currentSlide + 1); });
+        document.getElementById('finishBtn').addEventListener('click', finishExam);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const slides = Array.from(document.querySelectorAll('.slide'));
+                    currentSlide = slides.indexOf(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        initTest();
+        setTimeout(() => {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => observer.observe(slide));
+        }, 100);
+    </script>
+</body>
+</html>
