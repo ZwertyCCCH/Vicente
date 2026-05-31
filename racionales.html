@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Números Racionales</title>
+    <!-- Google Fonts + Font Awesome CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- KaTeX CSS y JS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #111827 100%);
+            color: #F3F4F6;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slides-container {
+            height: 100vh;
+            width: 100%;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        .slide {
+            scroll-snap-align: start;
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+            position: relative;
+        }
+
+        .slide-card {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            background: rgba(18, 25, 45, 0.75);
+            backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 48px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeSlideUp 0.5s ease-out;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #60A5FA, #A78BFA);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #FCD34D;
+            border-left: 5px solid #F59E0B;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.8rem 0;
+            color: #93C5FD;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 24px;
+            left: 32px;
+            font-size: 0.85rem;
+            color: #6B7280;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 14px;
+            border-radius: 60px;
+            font-weight: 500;
+        }
+
+        .formula {
+            background: #0F172A;
+            padding: 20px 24px;
+            border-radius: 24px;
+            text-align: center;
+            margin: 24px 0;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 1.2rem;
+        }
+
+        .formula .katex {
+            font-size: 1.3rem;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            border-left: 4px solid #3B82F6;
+            padding: 18px 24px;
+            border-radius: 20px;
+            margin: 16px 0;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .property-card {
+            background: #111827;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid #2D3A5E;
+            transition: all 0.2s;
+        }
+
+        .property-card:hover {
+            border-color: #F59E0B;
+            transform: translateY(-3px);
+        }
+
+        .property-card strong {
+            color: #FBBF24;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .property-card .katex {
+            font-size: 1rem;
+        }
+
+        .restriction {
+            background: #2D1F2E;
+            border-left: 4px solid #EF4444;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+
+        .note {
+            background: #1E3A5F;
+            border-left: 4px solid #3B82F6;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin: 12px 0;
+        }
+
+        .navigation-hint {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            color: #9CA3AF;
+            display: flex;
+            gap: 16px;
+            z-index: 100;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 60px;
+            padding: 14px 18px;
+            cursor: pointer;
+            z-index: 200;
+            transition: all 0.2s;
+            color: white;
+            font-size: 1.4rem;
+        }
+
+        .nav-btn:hover {
+            background: #3B82F6;
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .nav-left { left: 20px; }
+        .nav-right { right: 20px; }
+
+        .fixed-buttons {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            gap: 12px;
+            z-index: 300;
+        }
+
+        .fixed-btn {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 20px;
+            border-radius: 50px;
+            color: #E2E8F0;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .fixed-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #3B82F6, #2563EB);
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .slide-card { padding: 32px 20px; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .formula { padding: 14px; }
+            .formula .katex { font-size: 1rem; }
+            .property-grid { grid-template-columns: 1fr; }
+            .nav-btn { padding: 10px 14px; font-size: 1rem; }
+            .fixed-btn { padding: 8px 14px; font-size: 0.75rem; }
+        }
+
+        @media (max-width: 480px) {
+            .navigation-hint { display: none; }
+            .slide-card { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-btn nav-left" id="prevBtn">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="nav-btn nav-right" id="nextBtn">
+        <i class="fas fa-chevron-right"></i>
+    </div>
+
+    <div class="fixed-buttons">
+        <a href="matematicas.html" class="fixed-btn">
+            <i class="fas fa-arrow-left"></i> Matemáticas
+        </a>
+        <a href="e-racionales.html" class="fixed-btn">
+            Ejercicios <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="navigation-hint">
+        <span><i class="fas fa-arrow-left"></i> <i class="fas fa-arrow-right"></i> Flechas del teclado</span>
+        <span><i class="fas fa-mouse-pointer"></i> Click en botones</span>
+    </div>
+
+    <div class="slides-container" id="slidesContainer">
+        <!-- SLIDE 1 - PORTADA -->
+        <section class="slide">
+            <div class="slide-card" style="text-align: center;">
+                <i class="fas fa-fraction" style="font-size: 4rem; color: #60A5FA; margin-bottom: 1rem;"></i>
+                <h1>Números Racionales</h1>
+                <p style="font-size: 1.2rem; color: #CBD5E1; margin: 1rem 0 2rem 0;">Definición, operatoria, conversiones y aplicaciones</p>
+                <div style="margin-top: 40px;">
+                    <p style="color:#9CA3AF;"><i class="fas fa-arrow-down"></i> Usa las flechas ← → para navegar</p>
+                </div>
+                <div class="slide-number">1 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 2 - DEFINICIÓN -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>📖 Definición de Números Racionales</h2>
+                <p style="font-size: 1.1rem; margin-bottom: 20px;">Un <strong>número racional</strong> es aquel que puede expresarse como el <strong>cociente de dos números enteros</strong>, con denominador distinto de cero.</p>
+                <div class="formula">
+                    $$\mathbb{Q} = \left\{ \frac{a}{b} \mid a, b \in \mathbb{Z}, b \neq 0 \right\}$$
+                </div>
+                <div class="example-box">
+                    <strong>🎯 Elementos:</strong><br>
+                    • <span style="color:#FCD34D;">$a$</span> → <strong>numerador</strong> (puede ser cualquier entero)<br>
+                    • <span style="color:#FCD34D;">$b$</span> → <strong>denominador</strong> (entero distinto de cero)
+                </div>
+                <div class="example-box">
+                    <strong>💡 Ejemplos de números racionales:</strong><br>
+                    $\frac{1}{2}, \frac{3}{4}, -\frac{5}{3}, 7 = \frac{7}{1}, 0 = \frac{0}{1}, 0.\overline{3} = \frac{1}{3}$
+                </div>
+                <div class="slide-number">2 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3 - CONJUNTO DE LOS NÚMEROS RACIONALES (Q) -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>🔢 El conjunto $\mathbb{Q}$</h2>
+                <p>Los números racionales incluyen a otros conjuntos numéricos:</p>
+                <div class="property-grid">
+                    <div class="property-card">
+                        <strong>📌 Naturales ($\mathbb{N}$)</strong>
+                        <p>$1, 2, 3, 4, ...$<br>Todos son racionales: $1 = \frac{1}{1}$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>📌 Enteros ($\mathbb{Z}$)</strong>
+                        <p>$..., -3, -2, -1, 0, 1, 2, 3, ...$<br>$ -5 = \frac{-5}{1}$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>📌 Fracciones</strong>
+                        <p>$\frac{1}{2}, \frac{3}{4}, -\frac{2}{5}, \frac{7}{3}$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>📌 Decimales exactos</strong>
+                        <p>$0.5 = \frac{1}{2}$, $0.75 = \frac{3}{4}$, $2.5 = \frac{5}{2}$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>📌 Decimales periódicos</strong>
+                        <p>$0.\overline{3} = \frac{1}{3}$, $0.\overline{6} = \frac{2}{3}$, $1.\overline{6} = \frac{5}{3}$</p>
+                    </div>
+                </div>
+                <div class="note">
+                    <strong>💡 Propiedad:</strong> Entre dos números racionales siempre existe otro número racional. ¡Son infinitos y densos!
+                </div>
+                <div class="slide-number">3 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4 - OPERATORIA EN RACIONALES: Introducción -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>⚡ Operatoria en números racionales</h2>
+                <p>Para operar con números racionales, es fundamental conocer las reglas de:</p>
+                <div class="property-grid">
+                    <div class="property-card">
+                        <strong>➕ Adición</strong>
+                        <p>Suma de fracciones</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>➖ Sustracción</strong>
+                        <p>Resta de fracciones</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>✖️ Multiplicación</strong>
+                        <p>Producto de fracciones</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>➗ División</strong>
+                        <p>Cociente de fracciones</p>
+                    </div>
+                </div>
+                <div class="note">
+                    <strong>⚠️ Importante:</strong> Antes de sumar o restar, las fracciones deben tener el <strong>mismo denominador</strong> (mínimo común múltiplo).
+                </div>
+                <div class="slide-number">4 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5 - TRANSFORMAR FRACCIÓN A DECIMAL -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>🔄 Transformar fracción a decimal</h2>
+                <p>Para convertir una fracción a decimal, se <strong>divide el numerador por el denominador</strong>.</p>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 1:</strong> $\frac{3}{4} = 3 \div 4 = 0.75$ (decimal finito)
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 2:</strong> $\frac{1}{3} = 1 \div 3 = 0.3333... = 0.\overline{3}$ (decimal periódico)
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 3:</strong> $\frac{7}{8} = 7 \div 8 = 0.875$ (decimal finito)
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 4:</strong> $\frac{5}{6} = 5 \div 6 = 0.8333... = 0.8\overline{3}$ (decimal semiperiódico)
+                </div>
+                <div class="slide-number">5 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6 - TRANSFORMAR DECIMAL A FRACCIÓN -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>🔄 Transformar decimal a fracción</h2>
+                <h3>📌 Decimal finito</h3>
+                <div class="example-box">
+                    $0.75 = \frac{75}{100} = \frac{3}{4}$<br>
+                    Se escribe el número sin coma como numerador y una potencia de 10 como denominador.
+                </div>
+                <h3>📌 Decimal periódico puro</h3>
+                <div class="example-box">
+                    $0.\overline{3} = \frac{3}{9} = \frac{1}{3}$<br>
+                    Numerador: el período. Denominador: tantos 9 como cifras tenga el período.
+                </div>
+                <h3>📌 Decimal semiperiódico</h3>
+                <div class="example-box">
+                    $0.8\overline{3} = \frac{83-8}{90} = \frac{75}{90} = \frac{5}{6}$<br>
+                    Numerador: parte completa menos parte no periódica. Denominador: tantos 9 como cifras del período seguidos de tantos 0 como cifras de la parte no periódica.
+                </div>
+                <div class="slide-number">6 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 7 - DECIMALES FINITOS E INFINITOS -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>📊 Decimales finitos e infinitos</h2>
+                <div class="property-grid">
+                    <div class="property-card">
+                        <strong>✅ Decimal finito (exacto)</strong>
+                        <p>La división termina. Ej: $\frac{1}{2}=0.5$, $\frac{3}{4}=0.75$, $\frac{1}{8}=0.125$</p>
+                        <div class="note">Una fracción irreducible genera un decimal finito si su denominador solo tiene factores primos 2 y 5.</div>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔄 Decimal infinito periódico</strong>
+                        <p>Un dígito o grupo se repite indefinidamente. Ej: $\frac{1}{3}=0.\overline{3}$, $\frac{2}{7}=0.\overline{285714}$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔁 Decimal infinito semiperiódico</strong>
+                        <p>Hay una parte no periódica seguida de un período. Ej: $\frac{5}{6}=0.8\overline{3}$</p>
+                    </div>
+                </div>
+                <div class="restriction">
+                    <strong>⚠️ Nota:</strong> Los números irracionales (como $\pi$ o $\sqrt{2}$) tienen decimales infinitos NO periódicos. Estos NO pertenecen a $\mathbb{Q}$.
+                </div>
+                <div class="slide-number">7 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8 - ADICIÓN Y SUSTRACCIÓN: Igual denominador -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>➕ Adición y sustracción (igual denominador)</h2>
+                <div class="formula">
+                    $$\frac{a}{c} + \frac{b}{c} = \frac{a+b}{c}$$
+                    $$\frac{a}{c} - \frac{b}{c} = \frac{a-b}{c}$$
+                </div>
+                <p>Cuando las fracciones tienen el <strong>mismo denominador</strong>, se suman o restan los numeradores y se conserva el denominador.</p>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 1:</strong> $\frac{3}{7} + \frac{2}{7} = \frac{3+2}{7} = \frac{5}{7}$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 2:</strong> $\frac{5}{9} - \frac{2}{9} = \frac{5-2}{9} = \frac{3}{9} = \frac{1}{3}$
+                </div>
+                <div class="restriction">
+                    <strong>⚠️ Recuerda:</strong> Simplificar el resultado siempre que sea posible.
+                </div>
+                <div class="slide-number">8 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 9 - ADICIÓN Y SUSTRACCIÓN: Distinto denominador -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>➕ Adición y sustracción (distinto denominador)</h2>
+                <p>Para sumar o restar fracciones con <strong>diferente denominador</strong>:</p>
+                <ol style="margin-left: 30px; margin-bottom: 20px;">
+                    <li>Se calcula el <strong>mínimo común múltiplo (MCM)</strong> de los denominadores.</li>
+                    <li>Se amplifican las fracciones para que tengan el mismo denominador (el MCM).</li>
+                    <li>Se suman o restan los numeradores y se conserva el denominador.</li>
+                </ol>
+                <div class="formula">
+                    $$\frac{a}{b} + \frac{c}{d} = \frac{a \cdot d + c \cdot b}{b \cdot d}$$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo:</strong> $\frac{2}{3} + \frac{1}{4} = \frac{2 \cdot 4 + 1 \cdot 3}{3 \cdot 4} = \frac{8+3}{12} = \frac{11}{12}$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 2:</strong> $\frac{5}{6} - \frac{1}{4} = \frac{5 \cdot 4 - 1 \cdot 6}{6 \cdot 4} = \frac{20-6}{24} = \frac{14}{24} = \frac{7}{12}$
+                </div>
+                <div class="slide-number">9 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 10 - MULTIPLICACIÓN DE NÚMEROS RACIONALES -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>✖️ Multiplicación de números racionales</h2>
+                <div class="formula">
+                    $$\frac{a}{b} \times \frac{c}{d} = \frac{a \times c}{b \times d} \quad (b \neq 0, d \neq 0)$$
+                </div>
+                <p>Para multiplicar fracciones, se <strong>multiplican los numeradores</strong> y <strong>multiplican los denominadores</strong>.</p>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 1:</strong> $\frac{2}{3} \times \frac{4}{5} = \frac{2 \times 4}{3 \times 5} = \frac{8}{15}$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 2:</strong> $\frac{3}{4} \times \frac{5}{6} = \frac{3 \times 5}{4 \times 6} = \frac{15}{24} = \frac{5}{8}$ (simplificando antes: $\frac{3}{4} \times \frac{5}{6} = \frac{1}{4} \times \frac{5}{2} = \frac{5}{8}$)
+                </div>
+                <div class="note">
+                    <strong>💡 Simplificación cruzada:</strong> Puedes simplificar numeradores con denominadores antes de multiplicar.
+                </div>
+                <div class="slide-number">10 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 11 - DIVISIÓN DE NÚMEROS RACIONALES -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>➗ División de números racionales</h2>
+                <div class="formula">
+                    $$\frac{a}{b} \div \frac{c}{d} = \frac{a}{b} \times \frac{d}{c} = \frac{a \times d}{b \times c} \quad (b \neq 0, c \neq 0, d \neq 0)$$
+                </div>
+                <p>Para dividir fracciones, se <strong>multiplica la primera por el recíproco (inverso multiplicativo) de la segunda</strong>.</p>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 1:</strong> $\frac{2}{3} \div \frac{4}{5} = \frac{2}{3} \times \frac{5}{4} = \frac{2 \times 5}{3 \times 4} = \frac{10}{12} = \frac{5}{6}$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 2:</strong> $\frac{3}{4} \div 2 = \frac{3}{4} \div \frac{2}{1} = \frac{3}{4} \times \frac{1}{2} = \frac{3}{8}$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo 3:</strong> $5 \div \frac{2}{3} = \frac{5}{1} \times \frac{3}{2} = \frac{15}{2} = 7.5$
+                </div>
+                <div class="restriction">
+                    <strong>⚠️ Importante:</strong> No se puede dividir por cero. El divisor (segunda fracción) debe ser distinto de cero.
+                </div>
+                <div class="slide-number">11 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 12 - OPERACIONES COMBINADAS -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>🔢 Operaciones combinadas con racionales</h2>
+                <p>Al igual que con los enteros, se respeta el <strong>orden de las operaciones</strong> (PEMDAS):</p>
+                <ol style="margin-left: 30px; margin-bottom: 20px;">
+                    <li><strong>Paréntesis</strong></li>
+                    <li><strong>Exponentes / Potencias</strong></li>
+                    <li><strong>Multiplicación y División</strong> (de izquierda a derecha)</li>
+                    <li><strong>Adición y Sustracción</strong> (de izquierda a derecha)</li>
+                </ol>
+                <div class="example-box">
+                    <strong>📌 Ejemplo:</strong> $\frac{2}{3} + \frac{1}{2} \times \frac{4}{5} = \frac{2}{3} + \frac{4}{10} = \frac{2}{3} + \frac{2}{5} = \frac{10}{15} + \frac{6}{15} = \frac{16}{15}$
+                </div>
+                <div class="example-box">
+                    <strong>📌 Ejemplo con paréntesis:</strong> $\left(\frac{1}{2} + \frac{1}{3}\right) \times \frac{3}{5} = \left(\frac{3}{6} + \frac{2}{6}\right) \times \frac{3}{5} = \frac{5}{6} \times \frac{3}{5} = \frac{15}{30} = \frac{1}{2}$
+                </div>
+                <div class="slide-number">12 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 13 - PROPIEDADES DE LA OPERATORIA -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>📐 Propiedades de la operatoria en $\mathbb{Q}$</h2>
+                <div class="property-grid">
+                    <div class="property-card">
+                        <strong>🔹 Clausura</strong>
+                        <p>La suma, resta, multiplicación y división (por ≠0) de racionales da otro racional.</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔹 Conmutatividad</strong>
+                        <p>$a+b = b+a$, $a \times b = b \times a$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔹 Asociatividad</strong>
+                        <p>$(a+b)+c = a+(b+c)$<br>$(a \times b) \times c = a \times (b \times c)$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔹 Distributividad</strong>
+                        <p>$a \times (b+c) = a \times b + a \times c$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔹 Elemento neutro</strong>
+                        <p>$a+0 = a$, $a \times 1 = a$</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🔹 Inverso</strong>
+                        <p>$a + (-a) = 0$, $a \times \frac{1}{a} = 1$ (para $a \neq 0$)</p>
+                    </div>
+                </div>
+                <div class="slide-number">13 / 16</div>
+            </div>
+        </section>
+
+                <!-- SLIDE 14 - EJEMPLOS RESUELTOS DE OPERATORIA -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>✏️ Ejemplos resueltos paso a paso</h2>
+                <div class="example-box">
+                    <strong>1️⃣ Suma:</strong> $\frac{3}{8} + \frac{5}{12} = \frac{3 \cdot 3 + 5 \cdot 2}{24} = \frac{9+10}{24} = \frac{19}{24}$<br>
+                    <em style="color: #93C5FD;">MCM(8,12) = 24</em>
+                </div>
+                <div class="example-box">
+                    <strong>2️⃣ Multiplicación:</strong> $\frac{7}{9} \times \frac{3}{14} = \frac{7 \times 3}{9 \times 14} = \frac{21}{126} = \frac{1}{6}$<br>
+                    <em style="color: #93C5FD;">Simplificación: 7 con 14, 3 con 9</em>
+                </div>
+                <div class="example-box">
+                    <strong>3️⃣ División:</strong> $\frac{5}{6} \div \frac{10}{3} = \frac{5}{6} \times \frac{3}{10} = \frac{15}{60} = \frac{1}{4}$
+                </div>
+                <div class="example-box">
+                    <strong>4️⃣ Combinada:</strong> $\frac{2}{5} \times \left(\frac{1}{3} + \frac{1}{2}\right) = \frac{2}{5} \times \frac{5}{6} = \frac{10}{30} = \frac{1}{3}$<br>
+                    <em style="color: #93C5FD;">Primero se suma dentro del paréntesis: $\frac{1}{3} + \frac{1}{2} = \frac{5}{6}$</em>
+                </div>
+                <div class="slide-number">14 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 15 - APLICACIONES DE LOS NÚMEROS RACIONALES -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>🌍 Aplicaciones de los números racionales</h2>
+                <div class="property-grid">
+                    <div class="property-card">
+                        <strong>💰 Finanzas</strong>
+                        <p>Porcentajes, intereses, reparto de utilidades, IVA ($19\% = \frac{19}{100}$)</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🍳 Cocina</strong>
+                        <p>Recetas: $\frac{1}{2}$ taza, $\frac{3}{4}$ cucharadita</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>📐 Medidas</strong>
+                        <p>Longitudes: $\frac{1}{2}$ metro, $\frac{3}{8}$ pulgada</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>⚡ Física</strong>
+                        <p>Velocidades medias, densidades, fracciones de tiempo</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>🎯 Probabilidad</strong>
+                        <p>Probabilidad de un evento: $\frac{1}{6}$ al lanzar un dado</p>
+                    </div>
+                    <div class="property-card">
+                        <strong>📊 Estadística</strong>
+                        <p>Proporciones, frecuencias relativas, porcentajes</p>
+                    </div>
+                </div>
+                <div class="slide-number">15 / 16</div>
+            </div>
+        </section>
+
+        <!-- SLIDE 16 - RESUMEN FINAL Y CIERRE -->
+        <section class="slide">
+            <div class="slide-card">
+                <h2>🏆 Resumen final - Números Racionales</h2>
+                <div class="example-box">
+                    <strong>✅ Definición:</strong> $\mathbb{Q} = \{\frac{a}{b} \mid a,b \in \mathbb{Z}, b \neq 0\}$
+                </div>
+                <div class="example-box">
+                    <strong>✅ Operaciones clave:</strong><br>
+                    Suma/resta: Mismo denominador → sumar numeradores<br>
+                    Multiplicación: $\frac{a}{b} \times \frac{c}{d} = \frac{a \times c}{b \times d}$<br>
+                    División: $\frac{a}{b} \div \frac{c}{d} = \frac{a}{b} \times \frac{d}{c}$
+                </div>
+                <div class="example-box">
+                    <strong>✅ Decimales:</strong><br>
+                    Finito: denominador solo factores 2 y 5<br>
+                    Periódico: se repite un patrón
+                </div>
+                <div style="background: #0F172A; border-radius: 20px; padding: 20px; margin-top: 20px; text-align: center;">
+                    <i class="fas fa-graduation-cap" style="font-size: 2rem; color: #FBBF24;"></i>
+                    <p style="margin-top: 12px;">✅ ¡Clase completada! Ahora practica en la sección de ejercicios.</p>
+                </div>
+                <div class="slide-number">16 / 16</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const slidesContainer = document.getElementById('slidesContainer');
+        const slides = document.querySelectorAll('.slide');
+        let currentIndex = 0;
+
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+            currentIndex = index;
+            slides[currentIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                goToSlide(currentIndex + 1);
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft') {
+                goToSlide(currentIndex - 1);
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            goToSlide(currentIndex - 1);
+        });
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            goToSlide(currentIndex + 1);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const newIndex = Array.from(slides).indexOf(entry.target);
+                    if (newIndex !== -1) currentIndex = newIndex;
+                }
+            });
+        }, { threshold: 0.5 });
+
+        slides.forEach(slide => observer.observe(slide));
+
+        window.addEventListener('load', () => {
+            goToSlide(0);
+        });
+    </script>
+</body>
+</html>

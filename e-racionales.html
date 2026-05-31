@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ejercicios de Números Racionales</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, { delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}] });"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #111827 100%);
+            color: #F3F4F6;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .app-container { display: flex; height: 100vh; flex-direction: row; }
+        .indicators-panel {
+            width: 100px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 10px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+        .indicators-title { font-size: 0.8rem; color: #94A3B8; margin-bottom: 20px; text-align: center; }
+        .indicators-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .indicator {
+            width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: all 0.2s; background: #F59E0B; color: #1E293B;
+        }
+        .indicator.answered { background: #3B82F6; color: white; }
+        .indicator:hover { transform: scale(1.1); box-shadow: 0 0 0 2px rgba(59,130,246,0.5); }
+        .slides-container { flex: 1; height: 100vh; overflow-y: auto; scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+        .slide { scroll-snap-align: start; min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 60px 40px; }
+        .question-card {
+            max-width: 900px; width: 100%; background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px); border-radius: 48px; padding: 40px;
+            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .question-text { font-size: 1.4rem; font-weight: 500; margin-bottom: 30px; line-height: 1.5; color: #F1F5F9; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px; }
+        .option { display: flex; align-items: center; gap: 15px; padding: 12px 20px; background: #1E293B; border-radius: 60px; border: 1px solid #334155; cursor: pointer; transition: all 0.2s; }
+        .option:hover { background: #334155; border-color: #3B82F6; }
+        .option input { width: 20px; height: 20px; cursor: pointer; accent-color: #3B82F6; }
+        .option label { flex: 1; cursor: pointer; font-size: 1rem; color: #CBD5E1; }
+        .slide-number { text-align: center; margin-top: 20px; color: #6B7280; font-size: 0.85rem; }
+        .nav-btn {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 60px;
+            padding: 14px 18px; cursor: pointer; z-index: 200;
+            transition: all 0.2s; color: white; font-size: 1.3rem;
+        }
+        .nav-btn:hover { background: #3B82F6; transform: translateY(-50%) scale(1.05); }
+        .nav-left { left: 120px; }
+        .nav-right { right: 30px; }
+        .fixed-buttons {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; gap: 12px; z-index: 300;
+        }
+        .fixed-btn {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 20px; border-radius: 50px; color: #E2E8F0;
+            text-decoration: none; font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+            cursor: pointer;
+        }
+        .fixed-btn:hover { transform: translateY(-3px); background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; }
+        .finish-btn { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .finish-btn:hover { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
+        .results-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto;
+            padding: 40px 20px; display: none;
+        }
+        .results-container { max-width: 1000px; margin: 0 auto; background: #1E293B; border-radius: 48px; padding: 40px; }
+        .results-container h2 { color: #FCD34D; margin-bottom: 20px; }
+        .score-box { background: #0F172A; padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 30px; }
+        .score-box h3 { font-size: 2rem; color: #60A5FA; }
+        .result-question { background: #0F172A; border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 5px solid; }
+        .result-question.correct { border-left-color: #10B981; }
+        .result-question.incorrect { border-left-color: #EF4444; }
+        .explanation { margin-top: 12px; padding: 12px; background: #1E293B; border-radius: 12px; font-size: 0.9rem; color: #FBBF24; }
+        .action-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+        .action-btn { padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; }
+        .restart-btn { background: #10B981; color: white; }
+        .restart-btn:hover { background: #059669; transform: scale(1.02); }
+        .math-btn { background: #3B82F6; color: white; }
+        .math-btn:hover { background: #2563EB; transform: scale(1.02); }
+        .powers-btn { background: #8B5CF6; color: white; }
+        .powers-btn:hover { background: #7C3AED; transform: scale(1.02); }
+        @media (max-width: 768px) {
+            .indicators-panel { width: 70px; }
+            .indicator { width: 35px; height: 35px; font-size: 0.8rem; }
+            .nav-left { left: 85px; }
+            .question-card { padding: 25px; }
+            .question-text { font-size: 1.1rem; }
+        }
+        .katex-display { overflow-x: auto; overflow-y: hidden; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="indicators-panel">
+            <div class="indicators-title">Preguntas</div>
+            <div class="indicators-grid" id="indicatorsGrid"></div>
+        </div>
+        <div class="slides-container" id="slidesContainer"></div>
+    </div>
+
+    <div class="nav-btn nav-left" id="prevBtn"><i class="fas fa-chevron-left"></i></div>
+    <div class="nav-btn nav-right" id="nextBtn"><i class="fas fa-chevron-right"></i></div>
+    <div class="fixed-buttons">
+        <div class="fixed-btn finish-btn" id="finishBtn"><i class="fas fa-check-circle"></i> Finalizar</div>
+    </div>
+
+    <div class="results-overlay" id="resultsOverlay">
+        <div class="results-container" id="resultsContainer"></div>
+    </div>
+
+    <script>
+        function renderKatexInElement(element) {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
+        }
+
+        // ============================================
+        // POOL DE 100 PREGUNTAS SOBRE POTENCIAS
+        // ============================================
+        const questionPool = [
+            { text: "Una receta de pan requiere $\\frac{3}{4}$ kg de harina. Si solo tienes $\\frac{1}{2}$ kg, ¿cuánta harina te falta?", options: ["$\\frac{1}{4}$ kg", "$\\frac{5}{4}$ kg", "$\\frac{3}{8}$ kg", "$\\frac{1}{8}$ kg", "$\\frac{1}{2}$ kg"], correct: 0, explanation: "$\\frac{3}{4} - \\frac{1}{2} = \\frac{3}{4} - \\frac{2}{4} = \\frac{1}{4}$ kg" },
+            { text: "María corre $\\frac{5}{6}$ km por la mañana y $\\frac{1}{3}$ km por la tarde. ¿Cuántos kilómetros corre en total?", options: ["$\\frac{6}{9}$ km", "$\\frac{7}{6}$ km", "$1\\frac{1}{6}$ km", "$\\frac{5}{18}$ km", "$\\frac{2}{3}$ km"], correct: 2, explanation: "$\\frac{5}{6} + \\frac{2}{6} = \\frac{7}{6} = 1\\frac{1}{6}$ km" },
+            { text: "Calcula $\\frac{2}{3} \\times \\frac{3}{5}$ y simplifica el resultado.", options: ["$\\frac{6}{15}$", "$\\frac{2}{5}$", "$\\frac{5}{8}$", "$\\frac{1}{5}$", "$\\frac{6}{8}$"], correct: 1, explanation: "$\\frac{2 \\times 3}{3 \\times 5} = \\frac{6}{15} = \\frac{2}{5}$" },
+            { text: "Una tubería llena $\\frac{5}{6}$ de un depósito en 1 hora. Otra tubería vacía $\\frac{2}{3}$ por hora. ¿Qué fracción queda llena tras 1 hora con ambas activas?", options: ["$\\frac{10}{18}$", "$\\frac{1}{6}$", "$\\frac{3}{18}$", "$\\frac{1}{4}$", "$\\frac{5}{9}$"], correct: 1, explanation: "$\\frac{5}{6} - \\frac{2}{3} = \\frac{5}{6} - \\frac{4}{6} = \\frac{1}{6}$" },
+            { text: "Convierte $\\frac{3}{8}$ a decimal. ¿Qué tipo de decimal obtienes?", options: ["0.25, finito", "0.375, finito", "0.5, finito", "0.625, periódico", "0.75, finito"], correct: 1, explanation: "$3 \\div 8 = 0.375$, es finito porque el denominador solo tiene factores 2" },
+            { text: "Convierte $0.75$ a fracción en su mínima expresión.", options: ["$\\frac{1}{2}$", "$\\frac{2}{3}$", "$\\frac{3}{4}$", "$\\frac{4}{5}$", "$\\frac{5}{6}$"], correct: 2, explanation: "$0.75 = \\frac{75}{100} = \\frac{3}{4}$" },
+            { text: "¿Por qué $\\frac{1}{3}$ genera un decimal periódico pero $\\frac{1}{4}$ genera uno finito?", options: ["Porque 3 es impar y 4 es par", "Porque $4 = 2^2$ solo tiene factor 2; el 3 tiene factores distintos de 2 y 5", "Porque 3 < 4", "Porque $\\frac{1}{3}$ no se puede simplificar", "Porque 4 > 3"], correct: 1, explanation: "Un decimal es finito si el denominador (simplificado) solo tiene factores 2 y/o 5. El $4 = 2^2$ sí cumple; el 3, no." },
+            { text: "Convierte $0.\\overline{6}$ a fracción en su mínima expresión usando el método algebraico.", options: ["$\\frac{2}{3}$, porque $0.\\overline{6} = \\frac{6}{9}$", "$\\frac{1}{2}$", "$\\frac{3}{4}$", "$\\frac{5}{6}$", "$\\frac{1}{3}$"], correct: 0, explanation: "Sea $x = 0.\\overline{6}$; $10x = 6.\\overline{6}$; restando: $9x = 6$; $x = \\frac{6}{9} = \\frac{2}{3}$" },
+            { text: "Simplifica $\\frac{12}{18}$ dividiendo por su MCD.", options: ["$\\frac{2}{3}$", "$\\frac{3}{4}$", "$\\frac{4}{6}$", "$\\frac{6}{9}$", "$\\frac{1}{2}$"], correct: 0, explanation: "$\\text{MCD}(12,18) = 6$; $\\frac{12 \\div 6}{18 \\div 6} = \\frac{2}{3}$" },
+            { text: "Un terreno tiene $\\frac{2}{5}$ km de largo y $\\frac{3}{10}$ km de ancho. ¿Cuál es su perímetro?", options: ["$\\frac{5}{15}$ km", "$\\frac{7}{10}$ km", "$\\frac{7}{5}$ km", "$\\frac{6}{50}$ km", "$\\frac{7}{15}$ km"], correct: 2, explanation: "Perímetro $= 2\\left(\\frac{2}{5} + \\frac{3}{10}\\right) = 2 \\times \\frac{7}{10} = \\frac{14}{10} = \\frac{7}{5}$ km" },
+            { text: "De un pastel de $\\frac{7}{8}$ kg se come $\\frac{1}{4}$ kg. ¿Cuánto queda?", options: ["$\\frac{6}{8}$ kg", "$\\frac{5}{8}$ kg", "$\\frac{3}{8}$ kg", "$\\frac{1}{2}$ kg", "$\\frac{7}{4}$ kg"], correct: 1, explanation: "$\\frac{7}{8} - \\frac{2}{8} = \\frac{5}{8}$ kg" },
+            { text: "Calcula $\\frac{4}{9} \\times \\frac{3}{8}$ y exprésalo simplificado.", options: ["$\\frac{12}{72}$", "$\\frac{1}{6}$", "$\\frac{1}{3}$", "$\\frac{2}{3}$", "$\\frac{7}{17}$"], correct: 1, explanation: "$\\frac{4 \\times 3}{9 \\times 8} = \\frac{12}{72} = \\frac{1}{6}$" },
+            { text: "Si $\\frac{3}{10}$ litros de pintura cubren $\\frac{1}{5}$ m² de pared, ¿cuántos litros se necesitan por m²?", options: ["$\\frac{3}{50}$ L/m²", "$\\frac{15}{10}$ L/m²", "$\\frac{3}{2}$ L/m²", "$\\frac{2}{3}$ L/m²", "$\\frac{1}{2}$ L/m²"], correct: 2, explanation: "$\\frac{3}{10} \\div \\frac{1}{5} = \\frac{3}{10} \\times 5 = \\frac{15}{10} = \\frac{3}{2}$ L/m²" },
+            { text: "$\\frac{1}{4} = 0.25$. ¿Qué condición cumple su denominador para que el decimal sea finito?", options: ["Ser mayor que el numerador", "Solo tiene factores 2 y 5", "Es un número par", "Es menor que 10", "No tiene factores primos"], correct: 1, explanation: "$\\frac{1}{4}$: denominador $= 4 = 2^2$, solo tiene factor 2, por eso el decimal es finito." },
+            { text: "Convierte $0.125$ a fracción en su mínima expresión.", options: ["$\\frac{1}{4}$", "$\\frac{1}{6}$", "$\\frac{1}{8}$", "$\\frac{1}{5}$", "$\\frac{2}{16}$"], correct: 2, explanation: "$0.125 = \\frac{125}{1000} = \\frac{1}{8}$" },
+            { text: "Un recipiente contiene $\\frac{1}{2}$ L. Se añaden sucesivamente $\\frac{1}{4}$ L y $\\frac{1}{8}$ L. ¿Cuánto hay ahora?", options: ["$\\frac{7}{8}$ L", "$\\frac{3}{4}$ L", "$\\frac{5}{8}$ L", "$\\frac{1}{14}$ L", "$\\frac{3}{14}$ L"], correct: 0, explanation: "$\\frac{4}{8} + \\frac{2}{8} + \\frac{1}{8} = \\frac{7}{8}$ L" },
+            { text: "De una pizza de $\\frac{5}{6}$, alguien come $\\frac{1}{3}$. ¿Qué fracción queda?", options: ["$\\frac{4}{3}$", "$\\frac{4}{6}$", "$\\frac{1}{2}$", "$\\frac{3}{6}$", "$\\frac{2}{3}$"], correct: 2, explanation: "$\\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2}$" },
+            { text: "Calcula $\\frac{2}{7} \\times \\frac{14}{3}$ y expresa el resultado como fracción mixta.", options: ["$\\frac{28}{21}$", "$1\\frac{1}{3}$", "$\\frac{2}{3}$", "$\\frac{7}{3}$", "$\\frac{14}{21}$"], correct: 1, explanation: "$\\frac{2 \\times 14}{7 \\times 3} = \\frac{28}{21} = \\frac{4}{3} = 1\\frac{1}{3}$" },
+            { text: "Un vehículo consume $\\frac{9}{10}$ L por km. Si recorre $\\frac{3}{5}$ km, ¿cuánto combustible gasta?", options: ["$\\frac{27}{50}$ L", "$\\frac{45}{30}$ L", "$\\frac{3}{2}$ L", "$\\frac{2}{3}$ L", "$\\frac{5}{6}$ L"], correct: 0, explanation: "$\\frac{9}{10} \\times \\frac{3}{5} = \\frac{27}{50}$ L" },
+            { text: "Convierte $\\frac{5}{8}$ a decimal indicando cuántos decimales tiene.", options: ["0.5 (1 decimal)", "0.625 (3 decimales)", "0.75 (2 decimales)", "0.875 (3 decimales)", "0.6 (1 decimal)"], correct: 1, explanation: "$5 \\div 8 = 0.625$ (3 decimales; finito porque $8 = 2^3$)" },
+            { text: "Convierte $0.2\\overline{7}$ ($0.2777...$) a fracción.", options: ["$\\frac{5}{18}$", "$\\frac{27}{100}$", "$\\frac{5}{9}$", "$\\frac{1}{4}$", "$\\frac{28}{100}$"], correct: 0, explanation: "Parte no periódica: 1 cifra; periodo: 1 cifra. $\\frac{27 - 2}{90} = \\frac{25}{90} = \\frac{5}{18}$" },
+            { text: "¿Cuál fracción es mayor, $\\frac{3}{4}$ o $\\frac{4}{5}$? Convierte a decimal para comparar.", options: ["$\\frac{3}{4} > \\frac{4}{5}$", "$\\frac{3}{4} < \\frac{4}{5}$", "$\\frac{3}{4} = \\frac{4}{5}$", "No se puede comparar", "Son aproximadamente iguales"], correct: 1, explanation: "$\\frac{3}{4} = 0.75$ y $\\frac{4}{5} = 0.8$, entonces $\\frac{3}{4} < \\frac{4}{5}$" },
+            { text: "Calcula $\\frac{2}{3} + \\frac{1}{6}$ usando el MCM.", options: ["$\\frac{3}{9}$", "$\\frac{5}{6}$", "$\\frac{4}{6}$", "$\\frac{1}{2}$", "$\\frac{7}{6}$"], correct: 1, explanation: "$\\text{MCM}(3,6) = 6$; $\\frac{4}{6} + \\frac{1}{6} = \\frac{5}{6}$" },
+            { text: "Calcula $\\frac{7}{9} - \\frac{2}{9}$ (mismos denominadores).", options: ["$\\frac{5}{9}$", "$\\frac{5}{18}$", "$\\frac{9}{9}$", "Indefinido", "$\\frac{14}{18}$"], correct: 0, explanation: "$\\frac{7-2}{9} = \\frac{5}{9}$" },
+            { text: "Una tela mide $\\frac{4}{5}$ m y se corta en piezas de $\\frac{5}{8}$ m. ¿Cuántas piezas completas se obtienen?", options: ["2 piezas", "Menos de 1 pieza", "Exactamente 2 piezas", "$\\frac{32}{25}$ piezas, es decir 1 completa", "3 piezas"], correct: 3, explanation: "$\\frac{4}{5} \\div \\frac{5}{8} = \\frac{4}{5} \\times \\frac{8}{5} = \\frac{32}{25} = 1.28$, solo 1 pieza completa" },
+            { text: "Calcula $\\frac{3}{7} \\div \\frac{9}{14}$ y simplifica.", options: ["$\\frac{42}{63}$", "$\\frac{2}{3}$", "$\\frac{3}{2}$", "$\\frac{27}{98}$", "$\\frac{6}{9}$"], correct: 1, explanation: "$\\frac{3}{7} \\times \\frac{14}{9} = \\frac{42}{63} = \\frac{2}{3}$" },
+            { text: "Convierte $\\frac{7}{20}$ a decimal justificando por qué es finito.", options: ["0.25", "0.3", "0.35", "0.4", "0.45"], correct: 2, explanation: "$7 \\div 20 = 0.35$; $20 = 2^2 \\times 5$, solo factores 2 y 5, decimal finito" },
+            { text: "Convierte $0.\\overline{3}$ a fracción usando el método algebraico ($10x - x$).", options: ["$\\frac{1}{3}$", "$\\frac{3}{10}$", "$\\frac{33}{100}$", "$\\frac{1}{9}$", "$\\frac{3}{9}$ sin simplificar"], correct: 0, explanation: "$x = 0.\\overline{3}$; $10x = 3.\\overline{3}$; $9x = 3$; $x = \\frac{3}{9} = \\frac{1}{3}$" },
+            { text: "Convierte $0.\\overline{12}$ ($0.121212...$) a fracción.", options: ["$\\frac{12}{99}$", "$\\frac{12}{100}$", "$\\frac{4}{33}$", "$\\frac{6}{50}$", "$\\frac{1}{8}$"], correct: 0, explanation: "$x = 0.\\overline{12}$; $100x = 12.\\overline{12}$; $99x = 12$; $x = \\frac{12}{99} = \\frac{4}{33}$" },
+            { text: "Simplifica $\\frac{24}{36}$ hallando el MCD.", options: ["$\\frac{1}{2}$", "$\\frac{2}{3}$", "$\\frac{3}{4}$", "$\\frac{4}{6}$", "$\\frac{12}{18}$"], correct: 1, explanation: "$\\text{MCD}(24,36) = 12$; $\\frac{24 \\div 12}{36 \\div 12} = \\frac{2}{3}$" },
+            { text: "Un estanque tiene $\\frac{1}{4}$ de su capacidad llena. Se añade $\\frac{2}{3}$ de la capacidad. ¿Qué fracción queda sin llenar?", options: ["$\\frac{3}{7}$", "$\\frac{1}{12}$", "$\\frac{5}{12}$", "$\\frac{3}{12}$", "$\\frac{10}{12}$"], correct: 1, explanation: "Lleno: $\\frac{1}{4}+\\frac{2}{3} = \\frac{3+8}{12} = \\frac{11}{12}$. Sin llenar: $1 - \\frac{11}{12} = \\frac{1}{12}$" },
+            { text: "Calcula $\\frac{5}{8} - \\frac{1}{3}$ hallando el MCM de los denominadores.", options: ["$\\frac{4}{5}$", "$\\frac{7}{24}$", "$\\frac{1}{24}$", "$\\frac{3}{24}$", "$\\frac{6}{11}$"], correct: 1, explanation: "$\\text{MCM}(8,3) = 24$; $\\frac{15}{24} - \\frac{8}{24} = \\frac{7}{24}$" },
+            { text: "Pedro avanza $\\frac{2}{5}$ de un camino a pie y luego recorre en bicicleta $\\frac{10}{3}$ veces esa distancia. ¿Qué fracción del camino cubrió en bicicleta?", options: ["$\\frac{20}{15}$", "$\\frac{4}{3}$", "$\\frac{2}{3}$", "$\\frac{5}{3}$", "$\\frac{7}{8}$"], correct: 1, explanation: "$\\frac{2}{5} \\times \\frac{10}{3} = \\frac{20}{15} = \\frac{4}{3}$" },
+            { text: "Calcula $\\frac{8}{9} \\div \\frac{4}{3}$ y simplifica.", options: ["$\\frac{32}{27}$", "$\\frac{2}{3}$", "$\\frac{24}{36}$", "$\\frac{3}{2}$", "$\\frac{9}{6}$"], correct: 1, explanation: "$\\frac{8}{9} \\times \\frac{3}{4} = \\frac{24}{36} = \\frac{2}{3}$" },
+            { text: "Convierte $\\frac{3}{5}$ a decimal y verifica multiplicando: $0.6 \\times 5 = ?$", options: ["0.3", "0.35", "0.5", "0.6", "0.65"], correct: 3, explanation: "$3 \\div 5 = 0.6$; verificación: $0.6 \\times 5 = 3$ ✓" },
+            { text: "Convierte $0.625$ a fracción. ¿Cuántos ceros tiene el denominador antes de simplificar?", options: ["$\\frac{5}{8}$, 3 ceros", "$\\frac{3}{5}$, 3 ceros", "$\\frac{2}{3}$, 2 ceros", "$\\frac{7}{8}$, 3 ceros", "$\\frac{1}{16}$, 3 ceros"], correct: 0, explanation: "$0.625 = \\frac{625}{1000}$ (3 decimales → 3 ceros) $= \\frac{5}{8}$" },
+            { text: "Clasifica los decimales: $\\frac{1}{3} = 0.\\overline{3}$, $\\frac{5}{6} = 0.8\\overline{3}$, $\\frac{1}{4} = 0.25$. ¿Qué tipo es cada uno?", options: ["Finito, periódico puro, semiperiódico", "Periódico puro, semiperiódico, finito", "Periódico puro, finito, semiperiódico", "Finito, semiperiódico, periódico puro", "Todos son periódicos"], correct: 1, explanation: "$\\frac{1}{3}$: periódico puro. $\\frac{5}{6}$: semiperiódico (parte no periódica + periódica). $\\frac{1}{4}$: finito." },
+            { text: "Tres amigos reparten porciones de una pizza: uno come $\\frac{1}{8}$, otro $\\frac{3}{8}$ y el tercero $\\frac{5}{8}$. ¿Cuánto comieron en total?", options: ["$\\frac{9}{8}$", "$\\frac{9}{24}$", "$\\frac{1}{8}$", "$1\\frac{1}{8}$", "$\\frac{3}{8}$"], correct: 3, explanation: "$\\frac{1+3+5}{8} = \\frac{9}{8} = 1\\frac{1}{8}$" },
+            { text: "Un examen tiene $\\frac{11}{12}$ de preguntas de teoría. Si se eliminan $\\frac{1}{4}$ del total por ser muy fáciles, ¿qué fracción queda?", options: ["$\\frac{10}{8}$", "$\\frac{8}{12}$", "$\\frac{2}{3}$", "$\\frac{1}{2}$", "$\\frac{5}{12}$"], correct: 2, explanation: "$\\frac{11}{12} - \\frac{3}{12} = \\frac{8}{12} = \\frac{2}{3}$" },
+            { text: "Calcula $\\frac{7}{9} \\times \\frac{3}{14}$ cancelando factores comunes antes de multiplicar.", options: ["$\\frac{21}{126}$", "$\\frac{1}{6}$", "$\\frac{7}{42}$", "$\\frac{1}{9}$", "$\\frac{2}{9}$"], correct: 1, explanation: "7 con 14 (÷7) y 3 con 9 (÷3): $\\frac{1 \\times 1}{3 \\times 2} = \\frac{1}{6}$" },
+            { text: "Calcula $\\frac{8}{15} \\div \\frac{4}{5}$ usando la división como multiplicación por el inverso.", options: ["$\\frac{40}{60}$", "$\\frac{2}{3}$", "$\\frac{32}{75}$", "$\\frac{3}{2}$", "$\\frac{5}{6}$"], correct: 1, explanation: "$\\frac{8}{15} \\times \\frac{5}{4} = \\frac{40}{60} = \\frac{2}{3}$" },
+            { text: "Compara $\\frac{7}{8}$ y $\\frac{5}{6}$ sin convertir a decimal (usa denominador común).", options: ["$\\frac{7}{8} > \\frac{5}{6}$", "$\\frac{7}{8} < \\frac{5}{6}$", "$\\frac{7}{8} = \\frac{5}{6}$", "No se puede", "Son aproximadamente iguales"], correct: 0, explanation: "$\\text{MCM}(8,6)=24$; $\\frac{21}{24}$ vs $\\frac{20}{24}$; $\\frac{7}{8} > \\frac{5}{6}$" },
+            { text: "Dos tanques contienen $\\frac{5}{3}$ L y $\\frac{7}{3}$ L respectivamente. ¿Cuánto hay en total?", options: ["$3\\frac{3}{3}$", "4 litros", "$3\\frac{3}{6}$", "$3\\frac{1}{3}$", "$4\\frac{1}{3}$"], correct: 1, explanation: "$\\frac{5}{3} + \\frac{7}{3} = \\frac{12}{3} = 4$ L" },
+            { text: "Tienes 3 L de agua y usas $\\frac{1}{3}$ L para cocinar. ¿Cuántos litros quedan? Expresa como fracción mixta.", options: ["$2\\frac{2}{3}$ L", "$2\\frac{1}{3}$ L", "$\\frac{8}{3}$ L", "$\\frac{10}{3}$ L", "2 L"], correct: 0, explanation: "$3 - \\frac{1}{3} = \\frac{9}{3} - \\frac{1}{3} = \\frac{8}{3} = 2\\frac{2}{3}$ L" },
+            { text: "Calcula $\\frac{3}{4} \\times \\frac{8}{9} \\times \\frac{27}{32}$ usando cancelación cruzada.", options: ["$\\frac{648}{1152}$", "$\\frac{9}{16}$", "$\\frac{3}{4}$", "$\\frac{1}{2}$", "$\\frac{27}{32}$"], correct: 1, explanation: "$\\frac{3 \\times 8 \\times 27}{4 \\times 9 \\times 32} = \\frac{648}{1152} = \\frac{9}{16}$" },
+            { text: "Antes de calcular $\\frac{5}{6} \\div \\frac{10}{12}$, ¿qué observas sobre ambas fracciones?", options: ["Son distintas", "Son equivalentes ($\\frac{10}{12} = \\frac{5}{6}$), por eso el resultado es 1", "$\\frac{5}{6} \\times \\frac{12}{10} = 1$", "$\\frac{50}{72}$", "$\\frac{5}{12}$"], correct: 1, explanation: "$\\frac{10}{12} = \\frac{5}{6}$. Dividir un número entre sí mismo da 1." },
+            { text: "Convierte $\\frac{17}{20}$ a decimal verificando que $20 = 2^2 \\times 5$.", options: ["0.85", "0.17", "0.2", "0.8", "0.95"], correct: 0, explanation: "$17 \\div 20 = 0.85$; denominador $= 2^2 \\times 5$ → decimal finito" },
+            { text: "Convierte $0.8\\overline{3}$ ($0.8333...$) a fracción usando la fórmula para decimales semiperiódicos.", options: ["$\\frac{5}{6}$", "$\\frac{4}{5}$", "$\\frac{3}{4}$", "$\\frac{2}{3}$", "$\\frac{7}{8}$"], correct: 0, explanation: "$\\frac{83 - 8}{90} = \\frac{75}{90} = \\frac{5}{6}$" },
+            { text: "Simplifica $\\frac{36}{48}$ e indica el MCD.", options: ["$\\frac{3}{4}$, MCD = 12", "$\\frac{2}{3}$, MCD = 12", "$\\frac{1}{2}$, MCD = 24", "$\\frac{4}{5}$, MCD = 12", "$\\frac{6}{8}$ sin simplificar"], correct: 0, explanation: "$\\text{MCD}(36,48) = 12$; $\\frac{36 \\div 12}{48 \\div 12} = \\frac{3}{4}$" },
+            { text: "Una persona completa $\\frac{1}{2}$ de una tarea en la mañana, $\\frac{2}{5}$ en la tarde y $\\frac{1}{10}$ en la noche. ¿Completó exactamente la tarea?", options: ["No, le faltó $\\frac{4}{17}$", "Sí, $\\frac{5}{10} + \\frac{4}{10} + \\frac{1}{10} = 1$", "Le sobró $\\frac{8}{10}$", "Solo completó $\\frac{4}{5}$", "Le faltó $\\frac{3}{10}$"], correct: 1, explanation: "$\\frac{5}{10} + \\frac{4}{10} + \\frac{1}{10} = \\frac{10}{10} = 1$ ✓" },
+            { text: "Calcula $\\frac{7}{12} - \\frac{1}{6}$ indicando el MCM usado.", options: ["$\\frac{6}{6}$", "$\\frac{5}{12}$; MCM = 6", "$\\frac{5}{12}$; MCM = 12", "$\\frac{1}{2}$", "$\\frac{8}{12}$"], correct: 2, explanation: "$\\text{MCM}(12,6) = 12$; $\\frac{7}{12} - \\frac{2}{12} = \\frac{5}{12}$" },
+            { text: "Calcula $\\frac{4}{15} \\times \\frac{5}{8}$. ¿Qué factores puedes cancelar antes de multiplicar?", options: ["Ninguno", "$\\frac{1}{6}$ (cancela 4 con 8 y 5 con 15)", "$\\frac{5}{30}$", "$\\frac{2}{15}$", "$\\frac{20}{120}$"], correct: 1, explanation: "4 y 8 → ÷4; 5 y 15 → ÷5; $\\frac{1 \\times 1}{3 \\times 2} = \\frac{1}{6}$" },
+            { text: "Si $\\frac{9}{10}$ de un depósito equivale a $\\frac{3}{20}$ de otro, ¿cuántas veces cabe el segundo en el primero?", options: ["$\\frac{27}{200}$", "6 veces", "$\\frac{3}{2}$ veces", "$\\frac{18}{3}$ veces", "$\\frac{180}{30}$ sin simplificar"], correct: 1, explanation: "$\\frac{9}{10} \\div \\frac{3}{20} = \\frac{9}{10} \\times \\frac{20}{3} = \\frac{180}{30} = 6$" },
+            { text: "Ordena de menor a mayor $\\frac{1}{2}, \\frac{2}{3}, \\frac{3}{4}$ justificando con decimales.", options: ["$\\frac{1}{2} < \\frac{2}{3} < \\frac{3}{4}$", "$\\frac{3}{4} < \\frac{2}{3} < \\frac{1}{2}$", "$\\frac{2}{3} < \\frac{1}{2} < \\frac{3}{4}$", "$\\frac{1}{2} < \\frac{3}{4} < \\frac{2}{3}$", "Son iguales"], correct: 0, explanation: "$0.5 < 0.\\overline{6} < 0.75$ ✓" },
+            { text: "Calcula $\\frac{5}{12} + \\frac{7}{12}$. ¿Cuál es el resultado más simple posible?", options: ["$\\frac{12}{24}$", "$\\frac{12}{12}$", "1", "$\\frac{2}{12}$", "$\\frac{35}{144}$"], correct: 2, explanation: "$\\frac{5+7}{12} = \\frac{12}{12} = 1$" },
+            { text: "Calcula $\\frac{8}{9} - \\frac{2}{3}$ convirtiendo $\\frac{2}{3}$ a novenos.", options: ["$\\frac{6}{6}$", "$\\frac{2}{9}$", "$\\frac{4}{9}$", "$\\frac{2}{3}$", "$\\frac{1}{3}$"], correct: 1, explanation: "$\\frac{2}{3} = \\frac{6}{9}$; $\\frac{8}{9} - \\frac{6}{9} = \\frac{2}{9}$" },
+            { text: "Un campo tiene $\\frac{3}{5}$ ha sembradas. Se siembra adicionalmente $\\frac{10}{9}$ veces esa cantidad. ¿Cuánto se siembra en total (incluyendo lo adicional)?", options: ["$\\frac{30}{45}$ ha", "$\\frac{2}{3}$ ha (solo lo adicional)", "$\\frac{3}{5} + \\frac{2}{3} = \\frac{19}{15}$ ha", "$\\frac{15}{9}$ ha", "$\\frac{1}{2}$ ha"], correct: 2, explanation: "Adicional: $\\frac{3}{5} \\times \\frac{10}{9} = \\frac{2}{3}$ ha. Total: $\\frac{3}{5} + \\frac{2}{3} = \\frac{9}{15} + \\frac{10}{15} = \\frac{19}{15}$ ha" },
+            { text: "Una cuerda de $\\frac{6}{7}$ m se corta en trozos de $\\frac{2}{7}$ m. ¿Cuántos trozos completos se obtienen?", options: ["$\\frac{12}{49}$", "$\\frac{6}{2}$", "3 trozos", "$\\frac{42}{14}$", "$\\frac{7}{3}$"], correct: 2, explanation: "$\\frac{6}{7} \\div \\frac{2}{7} = \\frac{6}{7} \\times \\frac{7}{2} = \\frac{42}{14} = 3$" },
+            { text: "Convierte $0.375$ a fracción. ¿Qué potencia de 10 usas como denominador inicial?", options: ["$\\frac{3}{8}$, potencia $10^3 = 1000$", "$\\frac{5}{8}$, potencia $10^3 = 1000$", "$\\frac{7}{8}$, potencia $10^2 = 100$", "$\\frac{1}{3}$, potencia $10^3 = 1000$", "$\\frac{2}{5}$, potencia $10^2 = 100$"], correct: 0, explanation: "3 decimales → $\\frac{375}{1000} = \\frac{3}{8}$" },
+            { text: "Convierte $\\frac{13}{25}$ a decimal multiplicando numerador y denominador por 4.", options: ["0.52", "0.13", "0.25", "0.5", "0.65"], correct: 0, explanation: "$\\frac{13 \\times 4}{25 \\times 4} = \\frac{52}{100} = 0.52$" },
+            { text: "$\\frac{5}{6} = 0.8\\overline{3}$. ¿Por qué este decimal es semiperiódico?", options: ["Porque 5 > 1", "Tiene una parte no periódica (8) y una parte periódica ($\\overline{3}$)", "Porque 6 es par", "Porque el numerador es impar", "Porque 6 > 5"], correct: 1, explanation: "Semiperiódico = parte decimal no periódica + parte periódica. Aquí: 8 es no periódico, 3 se repite." },
+            { text: "Calcula $\\frac{1}{8} + \\frac{3}{8} + \\frac{5}{8}$ y convierte el resultado a fracción mixta.", options: ["$\\frac{9}{8}$", "$\\frac{9}{24}$", "$\\frac{1}{8}$", "$1\\frac{1}{8}$", "$\\frac{3}{8}$"], correct: 3, explanation: "$\\frac{1+3+5}{8} = \\frac{9}{8} = 1\\frac{1}{8}$" },
+            { text: "Calcula $\\frac{11}{12} - \\frac{1}{4}$ y expresa el resultado en su mínima expresión.", options: ["$\\frac{10}{8}$", "$\\frac{8}{12}$ sin simplificar", "$\\frac{8}{12}$", "$\\frac{2}{3}$", "$\\frac{1}{2}$"], correct: 3, explanation: "$\\frac{11}{12} - \\frac{3}{12} = \\frac{8}{12} = \\frac{2}{3}$" },
+            { text: "Calcula $\\frac{7}{9} \\times \\frac{3}{14}$ cancelando antes de multiplicar.", options: ["$\\frac{21}{126}$", "$\\frac{1}{6}$", "$\\frac{7}{42}$", "$\\frac{1}{9}$", "$\\frac{2}{9}$"], correct: 1, explanation: "7 con 14 (÷7) y 3 con 9 (÷3): $\\frac{1 \\times 1}{3 \\times 2} = \\frac{1}{6}$" },
+            { text: "Calcula $\\frac{8}{15} \\div \\frac{4}{5}$ y verifica el resultado multiplicando.", options: ["$\\frac{40}{60}$", "$\\frac{2}{3}$; verificación: $\\frac{2}{3} \\times \\frac{4}{5} = \\frac{8}{15}$ ✓", "$\\frac{32}{75}$", "$\\frac{3}{2}$", "$\\frac{5}{6}$"], correct: 1, explanation: "$\\frac{8}{15} \\times \\frac{5}{4} = \\frac{2}{3}$; verificación: $\\frac{2}{3} \\times \\frac{4}{5} = \\frac{8}{15}$ ✓" },
+            { text: "Compara $\\frac{7}{8}$ y $\\frac{5}{6}$ usando MCM sin convertir a decimales.", options: ["$\\frac{7}{8} > \\frac{5}{6}$: $\\frac{21}{24} > \\frac{20}{24}$", "$\\frac{7}{8} < \\frac{5}{6}$", "$\\frac{7}{8} = \\frac{5}{6}$", "No se puede sin decimales", "Son aproximadamente iguales"], correct: 0, explanation: "$\\text{MCM}(8,6)=24$; $\\frac{7}{8}=\\frac{21}{24}$, $\\frac{5}{6}=\\frac{20}{24}$; $21 > 20$" },
+            { text: "Se mezclan $1\\frac{2}{3}$ kg de arena y $2\\frac{1}{3}$ kg de cemento. ¿Cuántos kg hay en total?", options: ["$3\\frac{3}{3}$", "4 kg", "$3\\frac{3}{6}$", "$3\\frac{1}{3}$", "$4\\frac{1}{3}$"], correct: 1, explanation: "$\\frac{5}{3} + \\frac{7}{3} = \\frac{12}{3} = 4$ kg" },
+            { text: "De 3 metros de tela se usan $\\frac{1}{3}$ m. ¿Cuánto queda? Exprésalo como fracción mixta.", options: ["$2\\frac{2}{3}$ m", "$2\\frac{1}{3}$ m", "$\\frac{8}{3}$ m", "$\\frac{10}{3}$ m", "2 m"], correct: 0, explanation: "$3 - \\frac{1}{3} = \\frac{9}{3} - \\frac{1}{3} = \\frac{8}{3} = 2\\frac{2}{3}$ m" },
+            { text: "Calcula $\\frac{3}{4} \\times \\frac{8}{9} \\times \\frac{27}{32}$ mediante cancelación cruzada.", options: ["$\\frac{648}{1152}$", "$\\frac{9}{16}$", "$\\frac{3}{4}$", "$\\frac{1}{2}$", "$\\frac{27}{32}$"], correct: 1, explanation: "Cancelar: $\\frac{3}{9}=\\frac{1}{3}$, $\\frac{8}{32}=\\frac{1}{4}$, $27 \\div 3 = 9$; resultado: $\\frac{9}{16}$" },
+            { text: "Convierte $\\frac{17}{20}$ a decimal. ¿Cuántas cifras decimales tiene?", options: ["0.85, 2 cifras", "0.17, 2 cifras", "0.2, 1 cifra", "0.8, 1 cifra", "0.95, 2 cifras"], correct: 0, explanation: "$\\frac{17}{20} = \\frac{85}{100} = 0.85$ (2 cifras decimales)" },
+            { text: "Convierte $0.8\\overline{3}$ a fracción con la fórmula $\\frac{\\text{número} - \\text{parte no periódica}}{\\text{9...0...}}$.", options: ["$\\frac{5}{6}$", "$\\frac{4}{5}$", "$\\frac{3}{4}$", "$\\frac{2}{3}$", "$\\frac{7}{8}$"], correct: 0, explanation: "$\\frac{83 - 8}{90} = \\frac{75}{90} = \\frac{5}{6}$" },
+            { text: "Simplifica $\\frac{36}{48}$ e indica el MCD.", options: ["$\\frac{3}{4}$, MCD = 12", "$\\frac{2}{3}$, MCD = 12", "$\\frac{1}{2}$, MCD = 24", "$\\frac{4}{5}$, MCD = 12", "$\\frac{6}{8}$ sin simplificar"], correct: 0, explanation: "$\\text{MCD}(36,48) = 12$; $\\frac{36 \\div 12}{48 \\div 12} = \\frac{3}{4}$" },
+            { text: "Alguien hace $\\frac{1}{6}$, $\\frac{1}{3}$ y $\\frac{1}{2}$ de su tarea en lunes, martes y miércoles. ¿Terminó exactamente la tarea?", options: ["No, $\\frac{3}{11}$", "Sí, porque $\\frac{1}{6}+\\frac{2}{6}+\\frac{3}{6} = 1$", "Solo completó $\\frac{3}{6}$", "Solo $\\frac{2}{6}$", "Le falta $\\frac{5}{6}$"], correct: 1, explanation: "$\\frac{1}{6} + \\frac{2}{6} + \\frac{3}{6} = \\frac{6}{6} = 1$ ✓" },
+            { text: "Calcula $\\frac{7}{10} - \\frac{2}{15}$ indicando el MCM que usas.", options: ["$\\frac{17}{30}$; MCM = 30", "$\\frac{5}{5}$", "$\\frac{7}{15}$", "$\\frac{1}{2}$", "$\\frac{17}{30}$; MCM = 15"], correct: 0, explanation: "$\\text{MCM}(10,15)=30$; $\\frac{21}{30} - \\frac{4}{30} = \\frac{17}{30}$" },
+            { text: "Calcula $\\frac{4}{5} \\times \\frac{15}{16}$ cancelando antes de multiplicar.", options: ["$\\frac{60}{80}$", "$\\frac{3}{4}$", "$\\frac{3}{4}$ (cancela 4 con 16 y 5 con 15)", "$\\frac{1}{4}$", "$\\frac{5}{6}$"], correct: 2, explanation: "4/16 → ÷4; 5/15 → ÷5: $\\frac{1 \\times 3}{1 \\times 4} = \\frac{3}{4}$" },
+            { text: "Un grifo llena $\\frac{9}{14}$ de un tanque por hora y otro vacía $\\frac{3}{7}$ por hora. ¿Qué fracción neta se llena por hora?", options: ["$\\frac{63}{42}$", "$\\frac{3}{14}$ por hora", "$\\frac{27}{98}$ por hora", "$\\frac{2}{3}$ por hora", "$\\frac{9}{14}$ por hora"], correct: 1, explanation: "$\\frac{9}{14} - \\frac{6}{14} = \\frac{3}{14}$ por hora" },
+            { text: "Ordena de mayor a menor $\\frac{2}{5}, \\frac{3}{4}, \\frac{1}{2}$ convirtiendo a decimales.", options: ["$\\frac{3}{4} > \\frac{1}{2} > \\frac{2}{5}$", "$\\frac{1}{2} > \\frac{3}{4} > \\frac{2}{5}$", "$\\frac{2}{5} > \\frac{1}{2} > \\frac{3}{4}$", "$\\frac{3}{4} > \\frac{2}{5} > \\frac{1}{2}$", "Son iguales"], correct: 0, explanation: "$0.75 > 0.5 > 0.4$ ✓" },
+            { text: "Calcula $\\frac{5}{12} + \\frac{7}{18}$ hallando el MCM(12, 18).", options: ["$\\frac{29}{36}$; MCM = 36", "$\\frac{29}{36}$; MCM = 72", "$\\frac{12}{30}$", "$\\frac{35}{216}$", "$\\frac{1}{2}$"], correct: 0, explanation: "$\\text{MCM}(12,18)=36$; $\\frac{15}{36} + \\frac{14}{36} = \\frac{29}{36}$" },
+            { text: "Calcula $\\frac{11}{15} - \\frac{3}{10}$ hallando el MCM(15, 10).", options: ["$\\frac{13}{30}$; MCM = 30", "$\\frac{13}{30}$; MCM = 150", "$\\frac{8}{5}$", "$\\frac{8}{25}$", "$\\frac{1}{2}$"], correct: 0, explanation: "$\\text{MCM}(15,10)=30$; $\\frac{22}{30} - \\frac{9}{30} = \\frac{13}{30}$" },
+            { text: "Calcula $\\frac{7}{8} \\times \\frac{16}{21}$ cancelando factores antes de multiplicar.", options: ["$\\frac{112}{168}$", "$\\frac{2}{3}$", "$\\frac{2}{3}$ (cancela 7 con 21 y 8 con 16)", "$\\frac{1}{2}$", "$\\frac{3}{4}$"], correct: 2, explanation: "$\\frac{7}{21}=\\frac{1}{3}$ y $\\frac{16}{8}=2$; $\\frac{1 \\times 2}{1 \\times 3}=\\frac{2}{3}$" },
+            { text: "Calcula $\\frac{4}{9} \\div \\frac{8}{15}$ y verifica tu resultado.", options: ["$\\frac{60}{72}$", "$\\frac{5}{6}$", "$\\frac{5}{6}$; verificación: $\\frac{5}{6} \\times \\frac{8}{15} = \\frac{4}{9}$ ✓", "$\\frac{32}{135}$", "$\\frac{6}{5}$"], correct: 2, explanation: "$\\frac{4}{9} \\times \\frac{15}{8} = \\frac{60}{72} = \\frac{5}{6}$; verif: $\\frac{5}{6} \\times \\frac{8}{15} = \\frac{4}{9}$ ✓" },
+            { text: "Convierte $\\frac{23}{5}$ a fracción mixta explicando el proceso.", options: ["$4\\frac{3}{5}$", "$3\\frac{4}{5}$", "$5\\frac{3}{5}$", "$4\\frac{2}{5}$", "$5\\frac{4}{5}$"], correct: 0, explanation: "$23 = 4 \\times 5 + 3$; cociente 4, resto 3 → $4\\frac{3}{5}$" },
+            { text: "Convierte $5\\frac{2}{7}$ a fracción impropia y verifica dividiendo.", options: ["$\\frac{35}{7}$", "$\\frac{37}{7}$", "$\\frac{5}{7}$", "$\\frac{17}{7}$", "$\\frac{42}{7}$"], correct: 1, explanation: "$5 \\times 7 + 2 = 37$; verificación: $37 \\div 7 = 5$ resto 2 ✓" },
+            { text: "En una carrera se recorren tres tramos: $\\frac{1}{3}$ km, $\\frac{1}{4}$ km y $\\frac{1}{6}$ km. ¿Es la distancia total mayor o menor que 1 km?", options: ["Mayor que 1 km", "Igual a 1 km", "Igual a $\\frac{3}{4}$ km, menor que 1 km", "Igual a $\\frac{1}{2}$ km", "Igual a $\\frac{5}{12}$ km"], correct: 2, explanation: "$\\frac{4+3+2}{12} = \\frac{9}{12} = \\frac{3}{4}$ km < 1 km" },
+            { text: "Calcula $\\frac{7}{9} - \\frac{1}{6}$ hallando el MCM(9, 6).", options: ["$\\frac{11}{18}$; MCM = 18", "$\\frac{11}{18}$; MCM = 54", "$\\frac{6}{3}$", "$\\frac{8}{15}$", "$\\frac{1}{2}$"], correct: 0, explanation: "$\\text{MCM}(9,6)=18$; $\\frac{14}{18} - \\frac{3}{18} = \\frac{11}{18}$" },
+            { text: "¿Cuál de estas fracciones es la mayor: $\\frac{7}{9}$, $\\frac{5}{6}$ o $\\frac{11}{12}$?", options: ["$\\frac{7}{9}$", "$\\frac{5}{6}$", "$\\frac{11}{12}$", "Son iguales", "$\\frac{7}{9}$ y $\\frac{5}{6}$ son iguales"], correct: 2, explanation: "$\\text{MCM}=36$: $\\frac{28}{36}$, $\\frac{30}{36}$, $\\frac{33}{36}$ → mayor: $\\frac{11}{12}$" },
+            { text: "¿Qué condición sobre los factores primos del denominador determina si una fracción da decimal finito o periódico?", options: ["Que el numerador sea menor que el denominador", "Solo factores 2 y/o 5 → finito; cualquier otro factor primo → periódico", "Que el denominador sea par", "Que la fracción sea propia", "Que numerador y denominador sean coprimos"], correct: 1, explanation: "Decimal finito ↔ denominador $= 2^a \\times 5^b$. Cualquier otro primo en el denominador genera período." },
+            { text: "Si $\\frac{1}{2} + \\frac{2}{5} + x = 1$, ¿cuánto vale $x$?", options: ["$\\frac{4}{17}$", "$\\frac{1}{10}$", "$\\frac{8}{10}$", "$\\frac{4}{5}$", "$\\frac{3}{10}$"], correct: 1, explanation: "$\\frac{5+4}{10} = \\frac{9}{10}$; $x = 1 - \\frac{9}{10} = \\frac{1}{10}$" },
+            { text: "Calcula $\\frac{5}{12} + \\frac{7}{18}$ con MCM(12, 18) = 36.", options: ["$\\frac{15+14}{36} = \\frac{29}{36}$", "$\\frac{12}{30}$", "$\\frac{35}{216}$", "$\\frac{1}{2}$", "$\\frac{29}{30}$"], correct: 0, explanation: "$\\frac{15}{36} + \\frac{14}{36} = \\frac{29}{36}$" },
+            { text: "De $\\frac{11}{15}$ de un presupuesto disponible se gasta $\\frac{3}{10}$. ¿Cuánto queda?", options: ["$\\frac{22-9}{30} = \\frac{13}{30}$", "$\\frac{8}{5}$", "$\\frac{8}{25}$", "$\\frac{1}{2}$", "$\\frac{13}{30}$"], correct: 4, explanation: "$\\frac{22}{30} - \\frac{9}{30} = \\frac{13}{30}$" },
+            { text: "Calcula $\\frac{7}{8} \\times \\frac{16}{21}$ simplificando al máximo antes de multiplicar.", options: ["$\\frac{112}{168}$", "$\\frac{2}{3}$; cancela 7 con 21 y 8 con 16", "$\\frac{1}{2}$", "$\\frac{3}{4}$", "$\\frac{4}{3}$"], correct: 1, explanation: "$\\frac{7}{21}=\\frac{1}{3}$ y $\\frac{16}{8}=2$; $\\frac{1 \\times 2}{1 \\times 3}=\\frac{2}{3}$" },
+            { text: "Calcula $\\frac{4}{9} \\div \\frac{8}{15}$ sin calculadora, mostrando el inverso.", options: ["$\\frac{60}{72}$", "$\\frac{5}{6}$ (inverso: $\\frac{4}{9} \\times \\frac{15}{8}$)", "$\\frac{32}{135}$", "$\\frac{6}{5}$", "$\\frac{1}{2}$"], correct: 1, explanation: "$\\frac{4}{9} \\times \\frac{15}{8} = \\frac{60}{72} = \\frac{5}{6}$" }
+        ];
+
+        function getRandomQuestions(pool, count) {
+            const shuffled = [...pool];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, count);
+        }
+
+        let questions = [];
+        let userAnswers = [];
+        let testFinished = false;
+
+        function renderIndicators() {
+            const grid = document.getElementById('indicatorsGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator';
+                if (userAnswers[i] !== null) indicator.classList.add('answered');
+                indicator.textContent = i + 1;
+                indicator.addEventListener('click', (function(idx) {
+                    return function() {
+                        const slide = document.getElementById(`slide-${idx}`);
+                        if (slide) slide.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    };
+                })(i));
+                grid.appendChild(indicator);
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('slidesContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide';
+                slideDiv.id = `slide-${i}`;
+                slideDiv.innerHTML = `
+                    <div class="question-card">
+                        <div class="question-text">${i+1}. ${q.text}</div>
+                        <div class="options" id="options-${i}">
+                            ${q.options.map((opt, idx) => `
+                                <div class="option" data-opt-index="${idx}">
+                                    <input type="radio" name="q${i}" id="q${i}_opt${idx}" value="${idx}" ${userAnswers[i] === idx ? 'checked' : ''} ${testFinished ? 'disabled' : ''}>
+                                    <label for="q${i}_opt${idx}">${String.fromCharCode(65+idx)}) ${opt}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="slide-number">Pregunta ${i+1} de ${questions.length}</div>
+                    </div>
+                `;
+                container.appendChild(slideDiv);
+                if (!testFinished) {
+                    const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                    radios.forEach(radio => {
+                        radio.addEventListener('change', (e) => {
+                            if (!testFinished) {
+                                userAnswers[i] = parseInt(e.target.value);
+                                renderIndicators();
+                            }
+                        });
+                    });
+                }
+            }
+            renderKatexInElement(container);
+        }
+
+        function calculateGrade(correctCount, total) {
+            const percentCorrect = correctCount / total;
+            if (percentCorrect <= 0.6) return 1 + (percentCorrect / 0.6) * 3;
+            else return 4 + ((percentCorrect - 0.6) / 0.4) * 3;
+        }
+
+        function finishExam() {
+            if (testFinished) return;
+            testFinished = true;
+            let correctCount = 0;
+            const results = [];
+            for (let i = 0; i < questions.length; i++) {
+                const isCorrect = (userAnswers[i] === questions[i].correct);
+                if (isCorrect) correctCount++;
+                results.push({
+                    question: questions[i].text,
+                    userAnswer: userAnswers[i],
+                    correctAnswer: questions[i].correct,
+                    isCorrect: isCorrect,
+                    explanation: questions[i].explanation,
+                    options: questions[i].options
+                });
+            }
+            const grade = calculateGrade(correctCount, questions.length);
+            const gradeRounded = Math.round(grade * 10) / 10;
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <h2>📊 Resultados del Test</h2>
+                <div class="score-box">
+                    <p>✅ Respuestas correctas: ${correctCount} / ${questions.length}</p>
+                    <p>📈 Porcentaje: ${percentage}%</p>
+                    <h3>🎓 Nota: ${gradeRounded}</h3>
+                    <p>${gradeRounded >= 4 ? '✨ APROBADO ✨' : '📚 REPROBADO - Sigue practicando 📚'}</p>
+                </div>
+                <div id="detailedResults"></div>
+                <div class="action-buttons">
+                    <button class="action-btn restart-btn" id="restartBtn"><i class="fas fa-sync-alt"></i> Reiniciar Test</button>
+                    <a href="matematicas.html" class="action-btn math-btn"><i class="fas fa-arrow-left"></i> Volver a Matemáticas</a>
+                    <a href="racionales.html" class="action-btn powers-btn"><i class="fas fa-book-open"></i> Repasar Clase</a>
+                </div>
+            `;
+            const detailedDiv = document.getElementById('detailedResults');
+            for (let i = 0; i < results.length; i++) {
+                const r = results[i];
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `result-question ${r.isCorrect ? 'correct' : 'incorrect'}`;
+                const userLetter = r.userAnswer !== null ? String.fromCharCode(65 + r.userAnswer) : '?';
+                const correctLetter = String.fromCharCode(65 + r.correctAnswer);
+                const userAnswerText = r.userAnswer !== null ? r.options[r.userAnswer] : 'No respondida';
+                resultDiv.innerHTML = `
+                    <strong>Pregunta ${i+1}:</strong> ${r.question}<br>
+                    <span>📌 Tu respuesta: ${userLetter}) ${userAnswerText}</span><br>
+                    <span>✅ Respuesta correcta: ${correctLetter}) ${r.options[r.correctAnswer]}</span>
+                    ${!r.isCorrect ? `<div class="explanation">📖 <strong>Desarrollo correcto:</strong><br>${r.explanation}</div>` : '<div class="explanation">✓ ¡Respuesta correcta!</div>'}
+                `;
+                detailedDiv.appendChild(resultDiv);
+            }
+            renderKatexInElement(resultsContainer);
+            document.getElementById('resultsOverlay').style.display = 'block';
+            document.getElementById('restartBtn').addEventListener('click', () => {
+                location.reload();
+            });
+            for (let i = 0; i < questions.length; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            }
+        }
+
+        function initTest() {
+            questions = getRandomQuestions(questionPool, 40);
+            userAnswers = new Array(40).fill(null);
+            testFinished = false;
+            renderQuestions();
+            renderIndicators();
+        }
+
+        let currentSlide = 0;
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+            currentSlide = index;
+            slides[currentSlide]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!testFinished && document.getElementById('resultsOverlay').style.display !== 'block') {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    goToSlide(currentSlide + 1);
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    goToSlide(currentSlide - 1);
+                }
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (!testFinished) goToSlide(currentSlide - 1); });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (!testFinished) goToSlide(currentSlide + 1); });
+        document.getElementById('finishBtn').addEventListener('click', finishExam);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const slides = Array.from(document.querySelectorAll('.slide'));
+                    currentSlide = slides.indexOf(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        initTest();
+        setTimeout(() => {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => observer.observe(slide));
+        }, 100);
+    </script>
+</body>
+</html>

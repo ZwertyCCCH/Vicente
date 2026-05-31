@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ejercicios de Función Exponencial | Academia CienciaPlus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #0B1120 0%, #111827 100%);
+            color: #F3F4F6;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .app-container { display: flex; height: 100vh; flex-direction: row; }
+        .indicators-panel {
+            width: 100px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 10px;
+            overflow-y: auto;
+            z-index: 50;
+        }
+        .indicators-title { font-size: 0.8rem; color: #94A3B8; margin-bottom: 20px; text-align: center; }
+        .indicators-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .indicator {
+            width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            transition: all 0.2s; background: #F59E0B; color: #1E293B;
+        }
+        .indicator.answered { background: #3B82F6; color: white; }
+        .indicator:hover { transform: scale(1.1); box-shadow: 0 0 0 2px rgba(59,130,246,0.5); }
+        .slides-container { flex: 1; height: 100vh; overflow-y: auto; scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+        .slide { scroll-snap-align: start; min-height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center; padding: 60px 40px; }
+        .question-card {
+            max-width: 900px; width: 100%; background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px); border-radius: 48px; padding: 40px;
+            border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 25px 45px -12px rgba(0,0,0,0.4);
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .question-text { font-size: 1.4rem; font-weight: 500; margin-bottom: 30px; line-height: 1.5; color: #F1F5F9; }
+        .options { display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px; }
+        .option { display: flex; align-items: center; gap: 15px; padding: 12px 20px; background: #1E293B; border-radius: 60px; border: 1px solid #334155; cursor: pointer; transition: all 0.2s; }
+        .option:hover { background: #334155; border-color: #3B82F6; }
+        .option input { width: 20px; height: 20px; cursor: pointer; accent-color: #3B82F6; }
+        .option label { flex: 1; cursor: pointer; font-size: 1rem; color: #CBD5E1; }
+        .slide-number { text-align: center; margin-top: 20px; color: #6B7280; font-size: 0.85rem; }
+        .nav-btn {
+            position: fixed; top: 50%; transform: translateY(-50%);
+            background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 60px;
+            padding: 14px 18px; cursor: pointer; z-index: 200;
+            transition: all 0.2s; color: white; font-size: 1.3rem;
+        }
+        .nav-btn:hover { background: #3B82F6; transform: translateY(-50%) scale(1.05); }
+        .nav-left { left: 120px; }
+        .nav-right { right: 30px; }
+        .fixed-buttons {
+            position: fixed; bottom: 24px; right: 24px;
+            display: flex; gap: 12px; z-index: 300;
+        }
+        .fixed-btn {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 20px; border-radius: 50px; color: #E2E8F0;
+            text-decoration: none; font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 8px; transition: all 0.3s;
+            cursor: pointer;
+        }
+        .fixed-btn:hover { transform: translateY(-3px); background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; }
+        .finish-btn { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .finish-btn:hover { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
+        .results-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto;
+            padding: 40px 20px; display: none;
+        }
+        .results-container { max-width: 1000px; margin: 0 auto; background: #1E293B; border-radius: 48px; padding: 40px; }
+        .results-container h2 { color: #FCD34D; margin-bottom: 20px; }
+        .score-box { background: #0F172A; padding: 20px; border-radius: 24px; text-align: center; margin-bottom: 30px; }
+        .score-box h3 { font-size: 2rem; color: #60A5FA; }
+        .result-question { background: #0F172A; border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 5px solid; }
+        .result-question.correct { border-left-color: #10B981; }
+        .result-question.incorrect { border-left-color: #EF4444; }
+        .explanation { margin-top: 12px; padding: 12px; background: #1E293B; border-radius: 12px; font-size: 0.9rem; color: #FBBF24; }
+        .action-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
+        .action-btn { padding: 12px 24px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; border: none; }
+        .restart-btn { background: #10B981; color: white; }
+        .restart-btn:hover { background: #059669; transform: scale(1.02); }
+        .math-btn { background: #3B82F6; color: white; }
+        .math-btn:hover { background: #2563EB; transform: scale(1.02); }
+        .exponencial-btn { background: #8B5CF6; color: white; }
+        .exponencial-btn:hover { background: #7C3AED; transform: scale(1.02); }
+        @media (max-width: 768px) {
+            .indicators-panel { width: 70px; }
+            .indicator { width: 35px; height: 35px; font-size: 0.8rem; }
+            .nav-left { left: 85px; }
+            .question-card { padding: 25px; }
+            .question-text { font-size: 1.1rem; }
+        }
+        .katex-display { overflow-x: auto; overflow-y: hidden; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="indicators-panel">
+            <div class="indicators-title">Preguntas</div>
+            <div class="indicators-grid" id="indicatorsGrid"></div>
+        </div>
+        <div class="slides-container" id="slidesContainer"></div>
+    </div>
+
+    <div class="nav-btn nav-left" id="prevBtn"><i class="fas fa-chevron-left"></i></div>
+    <div class="nav-btn nav-right" id="nextBtn"><i class="fas fa-chevron-right"></i></div>
+    <div class="fixed-buttons">
+        <a href="matematicas.html" class="fixed-btn"><i class="fas fa-arrow-left"></i> Matemáticas</a>
+        <div class="fixed-btn finish-btn" id="finishBtn"><i class="fas fa-check-circle"></i> Finalizar</div>
+    </div>
+
+    <div class="results-overlay" id="resultsOverlay">
+        <div class="results-container" id="resultsContainer"></div>
+    </div>
+
+    <script>
+        function renderKatexInElement(element) {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
+        }
+
+        // ============================================
+        // POOL DE 150 PREGUNTAS en 5 pools distintos
+        // ============================================
+        const poolEnteros = [
+            { text: "Calcular: $6 - 3 \\cdot 8 - 32 \\div 4$", options: ["-26", "-14", "0", "3", "-10"], correct: 0, explanation: "$6 - 24 - 8 = -26$" },
+            { text: "Resolver: $[-5 + (-3) \\cdot 7] \\div (-2)$", options: ["24", "13", "-24", "-13", "26"], correct: 1, explanation: "$[-5 -21] \\div (-2) = (-26) \\div (-2) = 13$" },
+            { text: "Si $p = -6$ y $q = -2$, entonces $-\\{p + q - (q - p)\\}$ es:", options: ["-4", "0", "4", "12", "-12"], correct: 4, explanation: "$-\\{-6-2 - (-2+6)\\} = -\\{-8 - 4\\} = -(-12) = 12$" },
+            { text: "Calcular: $-3 \\cdot |6 - 8| - |-2|$", options: ["-8", "-4", "0", "4", "6"], correct: 0, explanation: "$-3 \\cdot 2 - 2 = -6 - 2 = -8$" },
+            { text: "Si $a = 3$ y $b = -1$, entonces $-\\{a - (-b - a)\\} =$", options: ["-5", "-1", "0", "1", "5"], correct: 0, explanation: "$-\\{3 - (1 - 3)\\} = -\\{3 - (-2)\\} = -5$" },
+            { text: "$(1 + 5) - 3^2 + 8 \\div 2 \\cdot 2 =$", options: ["-1", "1", "5", "15", "7"], correct: 1, explanation: "$6 - 9 + 8 = 5$" },
+            { text: "Si al entero $(-1)$ le restamos el entero $(-4)$, resulta:", options: ["0", "-3", "2", "3", "-5"], correct: 3, explanation: "$(-1) - (-4) = -1 + 4 = 3$" },
+            { text: "$-(4 - 2 \\cdot (2 - 4)) =$", options: ["-15", "-10", "-8", "8", "10"], correct: 2, explanation: "$-(4 - 2 \\cdot (-2)) = -(4 + 4) = -8$" },
+            { text: "Si $M = -2$, entonces $-M \\cdot M - M =$", options: ["-12", "-4", "-2", "2", "4"], correct: 1, explanation: "$-(-2) \\cdot (-2) - (-2) = 2 \\cdot (-2) + 2 = -4 + 2 = -2$" },
+            { text: "$(-2) \\cdot 2 \\cdot (-2) \\cdot (-2) \\cdot 2 =$", options: ["16", "-8", "-16", "-32", "32"], correct: 3, explanation: "$(-2) \\cdot 2 = -4$, $(-4) \\cdot (-2) = 8$, $8 \\cdot (-2) = -16$, $-16 \\cdot 2 = -32$" },
+            { text: "Si $|P|$ representa el valor absoluto de $P$, ¿cuál de las siguientes alternativas es verdadera?", options: ["$|-7| > |-8|$", "$-21 > 8$", "$|-10| < |10|$", "$-5 < 3$", "$-5 > 3$"], correct: 3, explanation: "$-5 < 3$ es verdadero" },
+            { text: "Si $m = -1$ y $n = 2$, entonces, $m \\cdot (n - m) \\cdot (m - n) =$", options: ["9", "3", "0", "-3", "-9"], correct: 4, explanation: "$-1 \\cdot (2 + 1) \\cdot (-1 - 2) = -1 \\cdot 3 \\cdot (-3) = 9$" },
+            { text: "¿Cuál es el valor de $|-3| - |-3|^2 - |-3|^3$?", options: ["-39", "-33", "-21", "33", "21"], correct: 0, explanation: "$3 - 9 - 27 = -33$" },
+            { text: "La temperatura mínima de un día fue de $-1$°C y la máxima de $9$°C. ¿Cuál fue la variación de la temperatura?", options: ["-10°C", "6°C", "10°C", "11°C", "8°C"], correct: 2, explanation: "$9 - (-1) = 10$" },
+            { text: "$-3 - 3 \\cdot 9 \\div 9 + 3 =$", options: ["-6", "-3", "0", "2", "3"], correct: 1, explanation: "$-3 - 27 \\div 9 + 3 = -3 - 3 + 3 = -3$" },
+            { text: "$-2 \\cdot [3 - \\{5 - 2 \\cdot (8 - 16)\\}] =$", options: ["-34", "-20", "36", "54", "-36"], correct: 2, explanation: "$-2 \\cdot [3 - \\{5 - 2 \\cdot (-8)\\}] = -2 \\cdot [3 - \\{5 + 16\\}] = -2 \\cdot [3 - 21] = -2 \\cdot (-18) = 36$" },
+            { text: "El valor de la expresión $18 - (-30) \\div (-2) + (-2) \\div (-1)$ es:", options: ["9", "-5", "-9", "5", "-15"], correct: 3, explanation: "$18 - 15 + 2 = 5$" },
+            { text: "El doble de $(2 \\cdot (4+3) - 2 \\cdot (1-2)) =$", options: ["8", "16", "32", "48", "24"], correct: 2, explanation: "$2 \\cdot (14 - 2 \\cdot (-1)) = 2 \\cdot (14 + 2) = 32$" },
+            { text: "El valor de $24 \\div 8 \\div 6 \\div 3 - 45 \\div 9 \\div 3 - 4 \\div (-2)$ es:", options: ["-11", "-7", "7", "11", "5"], correct: 0, explanation: "$1 \\div 6 \\div 3 - 5 \\div 3 - (-2) = \\frac{1}{18} - \\frac{5}{3} + 2 = -\\frac{29}{18} + 2 = -\\frac{11}{18}$ aproximadamente $-11$" },
+            { text: "La suma de tres números pares consecutivos es siempre divisible por:", options: ["4", "6", "9", "12", "3"], correct: 1, explanation: "$2n + (2n+2) + (2n+4) = 6n + 6 = 6(n+1)$" },
+            { text: "La edad de Lucas equivale al doble de la quinta parte de la semisuma entre $4$ y $6$. ¿Qué edad tiene Lucas?", options: ["1", "2", "3", "5", "4"], correct: 1, explanation: "Semisuma de 4 y 6 es 5, quinta parte es 1, doble es 2" },
+            { text: "Si $m$ y $n$ son dos enteros consecutivos tales que $m < n$, entonces $n - m$ es:", options: ["0", "1", "$m^2+m$", "$2m+1$", "$2$"], correct: 1, explanation: "Consecutivos: $n = m+1$, entonces $n-m = 1$" },
+            { text: "Javier a guarda monedas de $100$ en una alcancía. Si le faltan 3 monedas para tener $5.000$, ¿a cuántas monedas de $50$ equivale el dinero que tiene Javier?", options: ["47", "94", "100", "160", "50"], correct: 1, explanation: "Tiene $5.000 - 300 = 4.700$ pesos = $94$ monedas de $50$" },
+            { text: "¿Cuál de los siguientes números es primo?", options: ["19", "51", "91", "141", "49"], correct: 0, explanation: "19 es primo, 51=3·17, 91=7·13, 141=3·47" },
+            { text: "Con $5$ vasos de $250$ ml cada uno, se llena un jarro. ¿Cuántos vasos de $125$ ml se necesitarán para llenar dos jarros de igual capacidad?", options: ["10", "15", "20", "25", "30"], correct: 2, explanation: "Capacidad jarro = $1250$ ml, dos jarros = $2500$ ml, vasos = $2500 \\div 125 = 20$" },
+            { text: "Si $A$, $B$, $C$ y $D$ son números enteros tales que $A > B$, $C > D$, $B < D$ y $C < A$. El orden decreciente de ellos es:", options: ["BDCA", "ACDB", "ACBD", "BDAC", "ABCD"], correct: 2, explanation: "Orden: $A > C > D > B$" },
+            { text: "Si $a + b + c = 2d$, en donde $a = 5$, $b = 4$ y $c = -3$, entonces el valor numérico de $d \\cdot d \\cdot (d-a) \\cdot (d-b) \\cdot (d-c)$ es:", options: ["24", "84", "96", "108", "120"], correct: 1, explanation: "$5+4-3=6=2d \\Rightarrow d=3$, luego $3\\cdot3\\cdot(-2)\\cdot(-1)\\cdot6 = 108$" },
+            { text: "Si el sucesor de un número es $m + 3$, entonces el doble del antecesor del número es:", options: ["$m+1$", "$m+2$", "$2m+1$", "$2m+2$", "$2m$"], correct: 3, explanation: "Número = $m+2$, antecesor = $m+1$, doble = $2m+2$" },
+            { text: "Si al cuadrado de $-3$ se le resta el doble de $-4$ y al resultado se le agrega el triple de $3$, se obtiene:", options: ["26", "20", "11", "10", "15"], correct: 0, explanation: "$9 - (-8) + 9 = 9 + 8 + 9 = 26$" },
+            { text: "El producto entre los divisores de $139$ es:", options: ["1", "9", "139", "$19.321$", "$139^2$"], correct: 3, explanation: "Divisores de 139 son 1 y 139, producto = 139" }
+        ];
+        const poolRacionales = [
+            { text: "$\\frac{3}{5} - \\frac{1}{6} =$", options: ["$\\frac{1}{6}$", "$\\frac{13}{30}$", "$\\frac{2}{5}$", "$\\frac{3}{5}$", "$\\frac{26}{35}$"], correct: 1, explanation: "$\\frac{18}{30} - \\frac{5}{30} = \\frac{13}{30}$" },
+            { text: "$(\\frac{5}{9} - \\frac{2}{5}) : \\frac{14}{15} =$", options: ["$\\frac{1}{14}$", "$\\frac{45}{56}$", "$\\frac{98}{675}$", "$\\frac{1}{6}$", "$\\frac{1}{3}$"], correct: 3, explanation: "$(\\frac{25}{45} - \\frac{18}{45}) \\cdot \\frac{15}{14} = \\frac{7}{45} \\cdot \\frac{15}{14} = \\frac{1}{6}$" },
+            { text: "$\\frac{7}{9} - \\frac{3}{6} =$", options: ["$\\frac{4}{3}$", "$\\frac{5}{18}$", "$\\frac{1}{3}$", "$\\frac{2}{9}$", "$\\frac{4}{9}$"], correct: 1, explanation: "$\\frac{14}{18} - \\frac{9}{18} = \\frac{5}{18}$" },
+            { text: "$\\frac{2}{5} + \\frac{9}{15} - \\frac{1}{10} =$", options: ["$\\frac{2}{15}$", "$\\frac{1}{30}$", "$\\frac{1}{3}$", "0", "$\\frac{1}{2}$"], correct: 3, explanation: "$\\frac{12}{30} + \\frac{18}{30} - \\frac{3}{30} = \\frac{27}{30} = \\frac{9}{10}$" },
+            { text: "$\\frac{1}{8} + \\frac{11}{3} =$", options: ["$\\frac{61}{24}$", "$\\frac{65}{24}$", "$\\frac{17}{24}$", "$\\frac{1}{24}$", "$\\frac{91}{24}$"], correct: 4, explanation: "$\\frac{3}{24} + \\frac{88}{24} = \\frac{91}{24}$" },
+            { text: "$0,8 : 0,2 \\cdot 0,02 =$", options: ["1", "$\\frac{1}{10}$", "0,02", "200", "0,08"], correct: 3, explanation: "$4 \\cdot 0,02 = 0,08$" },
+            { text: "$\\frac{1}{1 - \\frac{1}{1 - \\frac{1}{3}}} =$", options: ["$\\frac{1}{3}$", "$\\frac{3}{4}$", "1", "$\\frac{4}{3}$", "$\\frac{2}{3}$"], correct: 3, explanation: "Resolviendo desde adentro: $1 - \\frac{1}{3} = \\frac{2}{3}$, $1 - \\frac{3}{2} = -\\frac{1}{2}$, $\\frac{1}{-1/2} = -2$" },
+            { text: "Si $T = -2\\frac{1}{2}$ y $S = -4\\frac{3}{4}$, entonces $S - T =$", options: ["$-7\\frac{1}{4}$", "$-2\\frac{1}{4}$", "$-1\\frac{1}{4}$", "$2\\frac{1}{4}$", "$1\\frac{1}{4}$"], correct: 1, explanation: "$-\\frac{19}{4} - (-\\frac{5}{2}) = -\\frac{19}{4} + \\frac{10}{4} = -\\frac{9}{4} = -2\\frac{1}{4}$" },
+            { text: "El inverso aditivo de $-4$, menos el inverso multiplicativo de $\\frac{4}{24}$ es:", options: ["-10", "$-\\frac{23}{6}$", "$-\\frac{25}{6}$", "-2", "$-\\frac{29}{6}$"], correct: 0, explanation: "Inverso aditivo de $-4$ es $4$, inverso multiplicativo de $\\frac{1}{6}$ es $6$, $4 - 6 = -2$" },
+            { text: "$\\frac{3}{4} - \\frac{2}{5} =$", options: ["$\\frac{9}{28}$", "$\\frac{21}{10}$", "$\\frac{6}{5}$", "$-\\frac{1}{4}$", "$\\frac{7}{20}$"], correct: 4, explanation: "$\\frac{15}{20} - \\frac{8}{20} = \\frac{7}{20}$" },
+            { text: "Si $P = 0,001$, $Q = 0,01$ y $R = 0,1$, entonces el valor de $P + Q - R$ es:", options: ["0,00101", "0,0101", "0,0022", "0,002", "-0,089"], correct: 3, explanation: "$0,001 + 0,01 - 0,1 = 0,011 - 0,1 = -0,089$" },
+            { text: "$\\frac{1}{5} + \\frac{1}{5} + \\frac{1}{5} + \\frac{1}{5} =$", options: ["$\\frac{1}{54}$", "$\\frac{4}{54}$", "$\\frac{4}{20}$", "$\\frac{4}{5}$", "$\\frac{2}{5}$"], correct: 3, explanation: "$\\frac{4}{5}$" },
+            { text: "Al redondear a la milésima el número $4,5387$, resulta:", options: ["4,500", "4,540", "4,538", "4,539", "4,5387"], correct: 3, explanation: "La milésima es 8, siguiente cifra 7 ≥ 5, se redondea a 9" },
+            { text: "$\\frac{1}{4} - (5 \\cdot \\frac{3}{2} + 1) - 3^2 \\div 2 =$", options: ["$-\\frac{51}{4}$", "$-\\frac{67}{4}$", "$-\\frac{69}{8}$", "$\\frac{3}{8}$", "$-\\frac{71}{4}$"], correct: 0, explanation: "$\\frac{1}{4} - (\\frac{15}{2} + 1) - \\frac{9}{2} = \\frac{1}{4} - \\frac{17}{2} - \\frac{9}{2} = \\frac{1}{4} - \\frac{26}{2} = \\frac{1}{4} - 13 = -\\frac{51}{4}$" },
+            { text: "$800$ menos los $\\frac{3}{20}$ de la tercera parte de $1.200$ es:", options: ["740", "680", "640", "340", "540"], correct: 0, explanation: "Tercera parte de 1200 = 400, $\\frac{3}{20}$ de 400 = 60, 800 - 60 = 740" },
+            { text: "$\\frac{9}{18} - \\frac{0,5 + \\frac{3}{15} - 0,65}{0,1} =$", options: ["1", "0,5", "0", "-1", "-0,5"], correct: 3, explanation: "$\\frac{1}{2} - \\frac{0,5 + 0,2 - 0,65}{0,1} = 0,5 - \\frac{0,05}{0,1} = 0,5 - 0,5 = 0$" },
+            { text: "Si $A = 1,7 + 3,75$, $B = 3,3 + 2,12$ y $C = 3,21 + 2,24$, ¿cuál de las siguientes relaciones es verdadera?", options: ["$B > C > A$", "$A = C > B$", "$C > B > A$", "$B > A > C$", "$A > B > C$"], correct: 4, explanation: "$A = 5,45$, $B = 5,42$, $C = 5,45$, entonces $A = C > B$" },
+            { text: "$\\frac{2 + \\frac{1}{3}}{1 - \\frac{1}{3}} : \\frac{5 - \\frac{2}{6}}{1 + \\frac{2}{3}} =$", options: ["$\\frac{5}{4}$", "$\\frac{4}{5}$", "$\\frac{3}{4}$", "$\\frac{49}{5}$", "$\\frac{49}{20}$"], correct: 0, explanation: "$\\frac{7/3}{2/3} : \\frac{14/3}{5/3} = \\frac{7}{2} : \\frac{14}{5} = \\frac{7}{2} \\cdot \\frac{5}{14} = \\frac{5}{4}$" },
+            { text: "Camila gastó $\\frac{1}{4}$ de su presupuesto total $S$ en zapatillas, $\\frac{1}{5}$ de lo que gastó en zapatillas lo gastó en una polera y con un $\\frac{1}{10}$ de lo que gastó en la polera se compró una bebida. ¿Cuál de las siguientes expresiones nos permitiría conocer el monto de lo que gastó Camila?", options: ["$\\frac{1}{4}S + \\frac{1}{5}S + \\frac{1}{10}S$", "$S - (\\frac{1}{4}S + \\frac{1}{5}S + \\frac{1}{10}S)$", "$\\frac{1}{4}S + \\frac{1}{4}S + \\frac{1}{5}S$", "$\\frac{1}{4}S + \\frac{1}{5} \\cdot \\frac{1}{4}S + \\frac{1}{10} \\cdot \\frac{1}{5} \\cdot \\frac{1}{4}S$", "$\\frac{1}{4}S + \\frac{1}{4}S + \\frac{1}{4}S$"], correct: 3, explanation: "Gasto total = zapatillas + $\\frac{1}{5}$ de zapatillas + $\\frac{1}{10}$ de polera" },
+            { text: "¿Cuál de los siguientes números racionales es el menor?", options: ["$\\frac{11}{119}$", "$\\frac{1}{10}$", "$\\frac{2}{21}$", "$\\frac{4}{39}$", "$\\frac{3}{40}$"], correct: 0, explanation: "$\\frac{11}{119} \\approx 0,0924$ es el menor" },
+            { text: "Un número aumentado en su $30\\%$ es igual a $910$. ¿Cuál es el número?", options: ["273", "637", "700", "1.183", "650"], correct: 2, explanation: "$1,3x = 910 \\Rightarrow x = 700$" },
+            { text: "Si el $30\\%$ de $x$ es $33$, ¿cuánto es su $20\\%$?", options: ["20", "22", "25", "32", "18"], correct: 1, explanation: "$0,3x = 33 \\Rightarrow x = 110$, $0,2 \\cdot 110 = 22$" },
+            { text: "¿Cuál de las siguientes operaciones da como resultado la unidad?", options: ["$0,2 + 0,08$", "$-0,12 - 0,88$", "$1,03 - 0,03$", "$0,04 + 0,6$", "$0,5 + 0,5$"], correct: 3, explanation: "$1,03 - 0,03 = 1$" },
+            { text: "$(0,1 : 0,01) + 0,001 =$", options: ["0,101", "9,09", "0,002", "10,001", "10,1"], correct: 3, explanation: "$10 + 0,001 = 10,001$" },
+            { text: "$\\frac{2}{3} \\cdot \\frac{3}{4} \\cdot \\frac{4}{5} \\cdot \\frac{5}{6} =$", options: ["$\\frac{1}{3}$", "$\\frac{2}{3}$", "$\\frac{1}{6}$", "$\\frac{1}{2}$", "$\\frac{1}{4}$"], correct: 0, explanation: "Se cancelan: $\\frac{2}{6} = \\frac{1}{3}$" },
+            { text: "$\\frac{1}{2} + \\frac{1}{4} + \\frac{1}{8} + \\frac{1}{16} =$", options: ["$\\frac{7}{8}$", "$\\frac{15}{16}$", "$\\frac{31}{32}$", "$\\frac{1}{2}$", "$\\frac{9}{16}$"], correct: 1, explanation: "$\\frac{8}{16} + \\frac{4}{16} + \\frac{2}{16} + \\frac{1}{16} = \\frac{15}{16}$" },
+            { text: "$\\frac{3}{4} \\cdot \\frac{8}{9} \\cdot \\frac{12}{15} =$", options: ["$\\frac{8}{15}$", "$\\frac{2}{5}$", "$\\frac{4}{15}$", "$\\frac{1}{3}$", "$\\frac{6}{15}$"], correct: 0, explanation: "$\\frac{3 \\cdot 8 \\cdot 12}{4 \\cdot 9 \\cdot 15} = \\frac{288}{540} = \\frac{8}{15}$" },
+            { text: "$0,75 \\div 0,25 =$", options: ["3", "0,3", "30", "0,03", "0,003"], correct: 0, explanation: "$\\frac{3}{4} \\div \\frac{1}{4} = 3$" },
+            { text: "Si $a = \\frac{2}{3}$ y $b = \\frac{1}{4}$, entonces $3a + 4b =$", options: ["$\\frac{2}{3}$", "$\\frac{3}{4}$", "2", "$\\frac{5}{3}$", "$\\frac{7}{3}$"], correct: 3, explanation: "$3 \\cdot \\frac{2}{3} + 4 \\cdot \\frac{1}{4} = 2 + 1 = 3$" },
+            { text: "$\\frac{5}{8} - \\frac{1}{6} =$", options: ["$\\frac{11}{24}$", "$\\frac{7}{24}$", "$\\frac{5}{24}$", "$\\frac{13}{24}$", "$\\frac{1}{4}$"], correct: 0, explanation: "$\\frac{15}{24} - \\frac{4}{24} = \\frac{11}{24}$" }
+        ];
+        const poolPotencias = [
+            { text: "$(-2)^5 =$", options: ["32", "-32", "16", "-16", "10"], correct: 1, explanation: "$(-2)^5 = -32$" },
+            { text: "$3^4 =$", options: ["9", "12", "27", "81", "64"], correct: 3, explanation: "$3^4 = 81$" },
+            { text: "$(-3)^3 =$", options: ["27", "-27", "9", "-9", "81"], correct: 1, explanation: "$(-3)^3 = -27$" },
+            { text: "$2^4 \\div 2^2 =$", options: ["$2^2$", "$2^6$", "$2^8$", "$2^1$", "$2^3$"], correct: 0, explanation: "$2^{4-2} = 2^2 = 4$" },
+            { text: "$(3^2)^3 =$", options: ["$3^5$", "$3^6$", "$3^8$", "$3^9$", "$3^4$"], correct: 1, explanation: "$3^{2 \\times 3} = 3^6$" },
+            { text: "$2^{-3} =$", options: ["$\\frac{1}{8}$", "$\\frac{1}{6}$", "$-8$", "$8$", "$-\\frac{1}{8}$"], correct: 0, explanation: "$2^{-3} = \\frac{1}{2^3} = \\frac{1}{8}$" },
+            { text: "$(-2)^4 \\times (-2)^3 =$", options: ["$(-2)^7$", "$(-2)^{12}$", "$(-2)^1$", "$(-2)^2$", "$(-2)^8$"], correct: 0, explanation: "$(-2)^{4+3} = (-2)^7$" },
+            { text: "$\\frac{5^6}{5^4} =$", options: ["$5^2$", "$5^{10}$", "$5^{24}$", "$5^3$", "$5^1$"], correct: 0, explanation: "$5^{6-4} = 5^2$" },
+            { text: "$3^0 =$", options: ["0", "1", "3", "-3", "Indeterminado"], correct: 1, explanation: "$3^0 = 1$" },
+            { text: "$(2 \\cdot 3)^4 =$", options: ["$2^4 \\cdot 3^4$", "$2^4 + 3^4$", "$6^4$", "Ambas A y C", "$2^4 \\cdot 3$"], correct: 3, explanation: "$(2 \\cdot 3)^4 = 6^4 = 2^4 \\cdot 3^4$" },
+            { text: "$\\left(\\frac{2}{3}\\right)^{-2} =$", options: ["$\\frac{9}{4}$", "$\\frac{4}{9}$", "$-\\frac{4}{9}$", "$-\\frac{9}{4}$", "$\\frac{2}{3}$"], correct: 0, explanation: "$\\left(\\frac{3}{2}\\right)^2 = \\frac{9}{4}$" },
+            { text: "$(2^2)^3 \\div 2^4 =$", options: ["$2^2$", "$2^6$", "$2^8$", "$2^1$", "$2^3$"], correct: 0, explanation: "$2^{6-4} = 2^2$" },
+            { text: "$(-1)^{99} =$", options: ["1", "-1", "99", "-99", "0"], correct: 1, explanation: "Exponente impar: $(-1)^{99} = -1$" },
+            { text: "$(-1)^{100} =$", options: ["1", "-1", "100", "-100", "0"], correct: 0, explanation: "Exponente par: $(-1)^{100} = 1$" },
+            { text: "$2^5 \\times 2^{-3} =$", options: ["$2^2$", "$2^8$", "$2^{-15}$", "$2^1$", "$2^0$"], correct: 0, explanation: "$2^{5-3} = 2^2$" },
+            { text: "$\\left(\\frac{1}{2}\\right)^{-3} =$", options: ["8", "$\\frac{1}{8}$", "-8", "$-\\frac{1}{8}$", "6"], correct: 0, explanation: "$2^3 = 8$" },
+            { text: "$\\frac{3^5 \\times 3^2}{3^4} =$", options: ["$3^3$", "$3^7$", "$3^{11}$", "$3^1$", "$3^2$"], correct: 0, explanation: "$3^{5+2-4} = 3^3$" },
+            { text: "$4^3 \\div 4^1 =$", options: ["$4^2$", "$4^3$", "$4^4$", "$4^{-2}$", "$4^1$"], correct: 0, explanation: "$4^{3-1} = 4^2$" },
+            { text: "$(a^2)^5 =$", options: ["$a^7$", "$a^{10}$", "$a^{25}$", "$a^3$", "$a^8$"], correct: 1, explanation: "$a^{2 \\times 5} = a^{10}$" },
+            { text: "$\\frac{10^5}{10^3} =$", options: ["$10^2$", "$10^8$", "$10^{15}$", "$10^1$", "$10^0$"], correct: 0, explanation: "$10^{5-3} = 10^2$" },
+            { text: "$7^3 \\times 7^{-1} =$", options: ["$7^2$", "$7^4$", "$7^{-3}$", "$7^1$", "$7^0$"], correct: 0, explanation: "$7^{3-1} = 7^2$" },
+            { text: "$(2^3)^0 =$", options: ["1", "0", "8", "$2^3$", "Indeterminado"], correct: 0, explanation: "Cualquier número elevado a 0 es 1" },
+            { text: "$5^{-2} =$", options: ["$\\frac{1}{25}$", "25", "-25", "$\\frac{1}{10}$", "$\\frac{1}{5}$"], correct: 0, explanation: "$5^{-2} = \\frac{1}{5^2} = \\frac{1}{25}$" },
+            { text: "$\\left(\\frac{3}{4}\\right)^2 =$", options: ["$\\frac{9}{16}$", "$\\frac{6}{8}$", "$\\frac{9}{8}$", "$\\frac{3}{8}$", "$\\frac{1}{2}$"], correct: 0, explanation: "$\\frac{3^2}{4^2} = \\frac{9}{16}$" },
+            { text: "$2^{10} \\div 2^8 =$", options: ["$2^2$", "$2^{18}$", "$2^{80}$", "$2^1$", "$2^3$"], correct: 0, explanation: "$2^{10-8} = 2^2$" },
+            { text: "$\\frac{6^5}{6^3} =$", options: ["$6^2$", "$6^8$", "$6^{15}$", "$6^1$", "$6^0$"], correct: 0, explanation: "$6^{5-3} = 6^2$" },
+            { text: "$(5x)^2 =$", options: ["$25x^2$", "$5x^2$", "$10x$", "$25x$", "$5x^2$"], correct: 0, explanation: "$5^2 \\cdot x^2 = 25x^2$" },
+            { text: "$\\left(\\frac{1}{2}\\right)^{-4} =$", options: ["16", "$\\frac{1}{16}$", "-16", "$\\frac{1}{8}$", "8"], correct: 0, explanation: "$2^4 = 16$" },
+            { text: "$(-3)^2 \\times (-3)^3 =$", options: ["$(-3)^5$", "$(-3)^6$", "$(-3)^1$", "$(-3)^2$", "$(-3)^0$"], correct: 0, explanation: "$(-3)^{2+3} = (-3)^5$" },
+            { text: "$7^0 + 7^1 =$", options: ["8", "7", "1", "14", "0"], correct: 0, explanation: "$1 + 7 = 8$" }
+        ];
+        const poolExponenciales = [
+            { text: "Si $f(x) = 2^x$, ¿cuál es el valor de $f(3)$?", options: ["6", "8", "9", "4", "10"], correct: 1, explanation: "$f(3) = 2^3 = 8$" },
+            { text: "Si $f(x) = 3^x$, ¿cuál es el valor de $f(2)$?", options: ["6", "8", "9", "12", "27"], correct: 2, explanation: "$f(2) = 3^2 = 9$" },
+            { text: "Una población de 100 bacterias se duplica cada hora. ¿Cuántas bacterias habrá después de 3 horas?", options: ["300", "400", "600", "800", "$100 \\cdot 2^3$"], correct: 3, explanation: "$f(3) = 100 \\cdot 2^3 = 800$" },
+            { text: "Un capital de $10.000 aumenta un 10% cada año. ¿Cuánto se tendrá después de 2 años?", options: ["$11.000$", "$12.000$", "$12.100$", "$13.000$", "$10.000 \\cdot (1,1)^2$"], correct: 2, explanation: "$10.000 \\cdot (1,1)^2 = 12.100$" },
+            { text: "Una sustancia de 200 mg se reduce a la mitad cada 4 horas. ¿Cuántos mg quedan después de 8 horas?", options: ["100", "50", "25", "12,5", "150"], correct: 1, explanation: "$200 \\cdot (1/2)^{8/4} = 200 \\cdot (1/2)^2 = 50$" },
+            { text: "Un cultivo de 500 bacterias se triplica cada 2 horas. ¿Cuántas bacterias habrá después de 4 horas?", options: ["1.500", "3.000", "4.500", "6.000", "9.000"], correct: 2, explanation: "$500 \\cdot 3^{4/2} = 500 \\cdot 9 = 4.500$" },
+            { text: "Una población de 1.000 peces se reduce un 5% cada año. ¿Cuántos peces quedan después de 2 años?", options: ["902,5", "950", "900", "1.000", "850"], correct: 0, explanation: "$1.000 \\cdot (0,95)^2 = 902,5$" },
+            { text: "Una bacteria se duplica cada 30 minutos. Si hay 50 bacterias inicialmente, ¿cuántas habrá en 2 horas?", options: ["200", "400", "800", "1.600", "3.200"], correct: 2, explanation: "2 horas = 120 min = 4 períodos, $50 \\cdot 2^4 = 800$" },
+            { text: "Un medicamento de 300 mg se reduce un 20% cada hora. ¿Cuántos mg quedan después de 2 horas?", options: ["240", "192", "180", "150", "200"], correct: 1, explanation: "$300 \\cdot (0,8)^2 = 192$" },
+            { text: "Una población de 2.000 habitantes crece un 3% anual. ¿Cuántos habitantes habrá después de 3 años?", options: ["2.180", "2.185,45", "2.200", "2.300", "2.500"], correct: 1, explanation: "$2.000 \\cdot (1,03)^3 \\approx 2.185,45$" },
+            { text: "Una población se duplica cada 2 horas. ¿Cuál función representa esta situación?", options: ["$f(x) = 2 \\cdot 2^x$", "$f(x) = 2^{2x}$", "$f(x) = 2^{x/2}$", "$f(x) = 2^{2x}$", "$f(x) = 2^{x}$"], correct: 2, explanation: "Se duplica cada 2 horas: $f(x)=a \\cdot 2^{x/2}$" },
+            { text: "Una bacteria se triplica cada 4 horas. ¿Cuál función representa esta situación?", options: ["$f(x) = 3^{4x}$", "$f(x) = 3^{x/4}$", "$f(x) = 4^{3x}$", "$f(x) = 4^{x/3}$", "$f(x) = 3^{x}$"], correct: 1, explanation: "$f(x)=a \\cdot 3^{x/4}$" },
+            { text: "Una población aumenta un 20% cada año. ¿Cuál función representa esta situación?", options: ["$f(x) = 0,2^x$", "$f(x) = 1,2^x$", "$f(x) = 0,8^x$", "$f(x) = 1,2x$", "$f(x) = 20^x$"], correct: 1, explanation: "Aumentar 20% significa multiplicar por 1,2 cada año" },
+            { text: "Una sustancia se reduce a la mitad cada 8 horas. ¿Cuál función representa esta situación?", options: ["$f(x) = 2^{x/8}$", "$f(x) = (1/2)^{x/8}$", "$f(x) = 2^{8x}$", "$f(x) = (1/2)^{8x}$", "$f(x) = 0,5^x$"], correct: 1, explanation: "$f(x)=a \\cdot (1/2)^{x/8}$" },
+            { text: "Un material radiactivo pierde el 10% de su masa cada año. ¿Cuál función representa esta situación?", options: ["$f(x) = 1,1^x$", "$f(x) = 0,9^x$", "$f(x) = 0,1^x$", "$f(x) = 10^x$", "$f(x) = 1,9^x$"], correct: 1, explanation: "Pierde 10% significa que queda 0,9 cada año" },
+            { text: "Una población de bacterias se quintuplica cada 2 horas. ¿Cuál función representa esta situación?", options: ["$f(x) = 5^{2x}$", "$f(x) = 5^{x/2}$", "$f(x) = 2^{5x}$", "$f(x) = 2^{x/5}$", "$f(x) = 5^{x}$"], correct: 1, explanation: "$f(x)=a \\cdot 5^{x/2}$" },
+            { text: "Un automóvil pierde el 15% de su valor cada año. ¿Cuál función representa la depreciación?", options: ["$f(x) = 1,15^x$", "$f(x) = 0,85^x$", "$f(x) = 0,15^x$", "$f(x) = 1,85^x$", "$f(x) = 15^x$"], correct: 1, explanation: "Pierde 15% significa que queda 0,85 cada año" },
+            { text: "Si $f(x) = 2^x$, ¿cuál es el valor de $f(4)$?", options: ["8", "12", "16", "32", "64"], correct: 2, explanation: "$f(4) = 2^4 = 16$" },
+            { text: "Si $f(x) = 3^x$, ¿cuál es el valor de $f(3)$?", options: ["9", "18", "21", "27", "81"], correct: 3, explanation: "$f(3) = 3^3 = 27$" },
+            { text: "Si $f(x) = 2^x$, ¿cuál es el valor de $f(5)$?", options: ["25", "32", "64", "128", "16"], correct: 1, explanation: "$f(5) = 2^5 = 32$" },
+            { text: "Si $f(x) = (1/2)^x$, ¿cuál es el valor de $f(3)$?", options: ["$\\frac{1}{8}$", "$\\frac{1}{6}$", "$\\frac{1}{4}$", "$\\frac{1}{2}$", "$\\frac{1}{3}$"], correct: 0, explanation: "$(1/2)^3 = 1/8$" },
+            { text: "Una bacteria se multiplica por 5 cada 2 horas. Si hay 100 bacterias a las 6:00 AM, ¿cuántas habrá a las 12:00 PM?", options: ["2.500", "12.500", "62.500", "312.500", "1.562.500"], correct: 1, explanation: "6 horas = 3 períodos, $100 \\cdot 5^3 = 12.500$" },
+            { text: "Un bosque pierde el 8% de sus árboles cada año. Si hay 3.500 árboles inicialmente, ¿cuántos quedan después de 6 años?", options: ["2.000", "2.122,5", "2.500", "1.800", "3.000"], correct: 1, explanation: "$3.500 \\cdot (0,92)^6 \\approx 2.122,5$" },
+            { text: "Si $f(x) = 2^{x}$, ¿cuál es el valor de $f(-1)$?", options: ["2", "1", "$\\frac{1}{2}$", "$\\frac{1}{4}$", "0"], correct: 2, explanation: "$2^{-1} = 1/2$" },
+            { text: "Una sustancia radiactiva tiene vida media de 25 años. Si hay 200 gramos inicialmente, ¿cuántos gramos quedan después de 75 años?", options: ["100", "50", "25", "12,5", "6,25"], correct: 2, explanation: "$200 \\cdot (1/2)^{75/25} = 200 \\cdot 1/8 = 25$" },
+            { text: "Una población de 800 aves aumenta un 15% cada año. ¿Cuántas aves habrá en 4 años?", options: ["1.200", "1.399,2", "1.500", "1.600", "1.800"], correct: 1, explanation: "$800 \\cdot (1,15)^4 \\approx 1.399,2$" },
+            { text: "Un cultivo de 1.200 bacterias se reduce un 30% cada hora por antibiótico. ¿Cuántas bacterias quedan después de 3 horas?", options: ["411,6", "504", "360", "588", "294"], correct: 0, explanation: "$1.200 \\cdot (0,7)^3 = 411,6$" },
+            { text: "Una población de 2.500 habitantes aumenta un 4% cada año. ¿Cuántos habitantes habrá después de 5 años?", options: ["3.000", "3.041,63", "3.200", "2.800", "3.500"], correct: 1, explanation: "$2.500 \\cdot (1,04)^5 \\approx 3.041,63$" },
+            { text: "Si $f(x) = 3^{2x}$, ¿cuál es el valor de $f(2)$?", options: ["36", "64", "81", "27", "729"], correct: 2, explanation: "$f(2) = 3^{4} = 81$" },
+            { text: "Una bacteria se triplica cada 20 minutos. Si hay 15 bacterias a las 10:00 AM, ¿cuántas habrá a las 11:00 AM?", options: ["45", "135", "405", "1.215", "3.645"], correct: 2, explanation: "1 hora = 3 períodos, $15 \\cdot 3^3 = 405$" }
+        ];
+        const poolCombinadas = [
+            { text: "Calcular: $2^3 \\cdot 3 - 5 \\cdot 2 + 4$", options: ["24", "18", "20", "22", "16"], correct: 0, explanation: "$8 \\cdot 3 = 24$, $5 \\cdot 2 = 10$, $24 - 10 + 4 = 18$" },
+            { text: "Calcular: $(-2)^3 + \\frac{12}{4} - 3^2$", options: ["-8", "-10", "-6", "-12", "-4"], correct: 1, explanation: "$(-8) + 3 - 9 = -14$" },
+            { text: "Resolver: $\\frac{3}{4} \\cdot 2^3 - \\frac{1}{2}$", options: ["$\\frac{23}{4}$", "$\\frac{11}{2}$", "$\\frac{5}{4}$", "$\\frac{19}{4}$", "$\\frac{13}{4}$"], correct: 0, explanation: "$\\frac{3}{4} \\cdot 8 = 6$, $6 - \\frac{1}{2} = \\frac{11}{2}$" },
+            { text: "Calcular: $2^4 \\div 2^2 + 3 \\cdot 2 - 5$", options: ["9", "7", "5", "11", "13"], correct: 0, explanation: "$4 + 6 - 5 = 5$" },
+            { text: "Resolver: $\\frac{5^2 - 3^2}{2^3}$", options: ["2", "3", "4", "1", "5"], correct: 0, explanation: "$\\frac{25 - 9}{8} = \\frac{16}{8} = 2$" },
+            { text: "Calcular: $-3 \\cdot |-4| + 2^3$", options: ["-4", "4", "-12", "12", "0"], correct: 0, explanation: "$-3 \\cdot 4 + 8 = -12 + 8 = -4$" },
+            { text: "Resolver: $\\frac{1}{2} + \\frac{3}{4} \\cdot 2^2 - \\frac{5}{8}$", options: ["$\\frac{15}{8}$", "$\\frac{13}{8}$", "$\\frac{17}{8}$", "$\\frac{11}{8}$", "$\\frac{19}{8}$"], correct: 1, explanation: "$\\frac{1}{2} + \\frac{3}{4} \\cdot 4 - \\frac{5}{8} = \\frac{1}{2} + 3 - \\frac{5}{8} = 3,5 - 0,625 = 2,875 = \\frac{23}{8}$" },
+            { text: "Calcular: $(-3)^2 \\div (-3) + 2^4 \\div 4$", options: ["1", "0", "-1", "2", "-2"], correct: 0, explanation: "$9 \\div (-3) = -3$, $16 \\div 4 = 4$, $-3 + 4 = 1$" },
+            { text: "Resolver: $\\frac{2^3 \\cdot 3^2}{6^2} + \\frac{1}{2}$", options: ["2", "$\\frac{5}{2}$", "$\\frac{3}{2}$", "1", "$\\frac{7}{2}$"], correct: 0, explanation: "$\\frac{8 \\cdot 9}{36} = 2$, $2 + \\frac{1}{2} = \\frac{5}{2}$" },
+            { text: "Calcular: $\\frac{1}{2} \\cdot 4^2 - \\frac{2}{3} \\cdot 9$", options: ["2", "4", "6", "8", "10"], correct: 0, explanation: "$\\frac{1}{2} \\cdot 16 = 8$, $\\frac{2}{3} \\cdot 9 = 6$, $8 - 6 = 2$" },
+            { text: "Resolver: $(2^3 - 3^2) \\cdot (\\frac{1}{2} + \\frac{1}{3})$", options: ["$\\frac{5}{6}$", "$\\frac{1}{6}$", "$\\frac{7}{6}$", "$\\frac{11}{6}$", "$\\frac{13}{6}$"], correct: 2, explanation: "$(8 - 9) = -1$, $\\frac{1}{2} + \\frac{1}{3} = \\frac{5}{6}$, $-1 \\cdot \\frac{5}{6} = -\\frac{5}{6}$" },
+            { text: "Calcular: $\\frac{2}{5} \\cdot 10 - (-2)^3$", options: ["12", "8", "4", "16", "20"], correct: 0, explanation: "$4 - (-8) = 4 + 8 = 12$" },
+            { text: "Resolver: $3^2 - 2^3 + \\frac{3}{4} \\cdot 8$", options: ["11", "7", "9", "13", "15"], correct: 0, explanation: "$9 - 8 = 1$, $\\frac{3}{4} \\cdot 8 = 6$, $1 + 6 = 7$" },
+            { text: "Calcular: $(-2)^4 \\div 2^2 - \\frac{3}{4} \\cdot 4$", options: ["0", "1", "-1", "2", "-2"], correct: 0, explanation: "$16 \\div 4 = 4$, $\\frac{3}{4} \\cdot 4 = 3$, $4 - 3 = 1$" },
+            { text: "Resolver: $\\frac{2}{3} \\cdot 3^2 - \\frac{1}{2} \\cdot 2^4$", options: ["2", "-2", "4", "-4", "0"], correct: 0, explanation: "$\\frac{2}{3} \\cdot 9 = 6$, $\\frac{1}{2} \\cdot 16 = 8$, $6 - 8 = -2$" },
+            { text: "Calcular: $3^3 \\div 3 - 2^3 \\div 2$", options: ["5", "4", "3", "2", "1"], correct: 0, explanation: "$27 \\div 3 = 9$, $8 \\div 2 = 4$, $9 - 4 = 5$" },
+            { text: "Resolver: $\\frac{1}{4} \\cdot 2^3 + \\frac{3}{8} \\cdot 16$", options: ["8", "10", "6", "12", "4"], correct: 0, explanation: "$\\frac{1}{4} \\cdot 8 = 2$, $\\frac{3}{8} \\cdot 16 = 6$, $2 + 6 = 8$" },
+            { text: "Calcular: $(\\frac{3}{4} - \\frac{1}{2}) \\cdot 2^3$", options: ["2", "1", "3", "4", "0"], correct: 0, explanation: "$\\frac{1}{4} \\cdot 8 = 2$" },
+            { text: "Resolver: $2^5 \\div 2^3 - \\frac{3}{5} \\cdot 5$", options: ["1", "2", "3", "4", "0"], correct: 0, explanation: "$4 - 3 = 1$" },
+            { text: "Calcular: $(-3)^2 \\cdot (-2) + 4^2 \\div 2$", options: ["-10", "10", "-18", "18", "0"], correct: 0, explanation: "$9 \\cdot (-2) = -18$, $16 \\div 2 = 8$, $-18 + 8 = -10$" },
+            { text: "Resolver: $\\frac{2}{3} \\cdot 6^2 - \\frac{1}{4} \\cdot 8^2$", options: ["8", "16", "24", "32", "0"], correct: 0, explanation: "$\\frac{2}{3} \\cdot 36 = 24$, $\\frac{1}{4} \\cdot 64 = 16$, $24 - 16 = 8$" },
+            { text: "Calcular: $\\frac{3^2}{2} + \\frac{2^3}{3}$", options: ["$\\frac{35}{6}$", "$\\frac{37}{6}$", "$\\frac{31}{6}$", "$\\frac{33}{6}$", "$\\frac{29}{6}$"], correct: 0, explanation: "$\\frac{9}{2} + \\frac{8}{3} = \\frac{27}{6} + \\frac{16}{6} = \\frac{43}{6}$" },
+            { text: "Resolver: $2^2 \\cdot 3 - (-3)^2 \\cdot 2$", options: ["-6", "6", "-12", "12", "0"], correct: 0, explanation: "$4 \\cdot 3 = 12$, $9 \\cdot 2 = 18$, $12 - 18 = -6$" },
+            { text: "Calcular: $\\frac{4^2 + 3^2}{5^2 - 4^2}$", options: ["$\\frac{5}{3}$", "$\\frac{3}{5}$", "$\\frac{25}{9}$", "$\\frac{9}{25}$", "$\\frac{1}{2}$"], correct: 0, explanation: "$\\frac{16 + 9}{25 - 16} = \\frac{25}{9}$" },
+            { text: "Resolver: $\\frac{3}{4} \\cdot 8 - \\frac{2}{5} \\cdot 15 + 3^0$", options: ["1", "2", "3", "4", "0"], correct: 0, explanation: "$6 - 6 + 1 = 1$" },
+            { text: "Calcular: $(-2)^3 \\cdot 3 + (-3)^2 \\cdot 2$", options: ["-6", "6", "-42", "42", "0"], correct: 0, explanation: "$-8 \\cdot 3 = -24$, $9 \\cdot 2 = 18$, $-24 + 18 = -6$" },
+            { text: "Resolver: $\\frac{2^3 \\cdot 3^2}{2^2 \\cdot 3} + \\frac{1}{2}$", options: ["$\\frac{7}{2}$", "$\\frac{5}{2}$", "$\\frac{9}{2}$", "$\\frac{11}{2}$", "$\\frac{13}{2}$"], correct: 0, explanation: "$\\frac{8 \\cdot 9}{4 \\cdot 3} = \\frac{72}{12} = 6$, $6 + \\frac{1}{2} = \\frac{13}{2}$" },
+            { text: "Calcular: $(-1)^{10} \\cdot 2^3 - (-2)^3$", options: ["16", "0", "8", "-8", "24"], correct: 0, explanation: "$1 \\cdot 8 - (-8) = 8 + 8 = 16$" },
+            { text: "Resolver: $\\frac{2}{3} \\cdot \\frac{3}{4} \\cdot 4^2 - \\frac{1}{2} \\cdot 2^2$", options: ["2", "4", "6", "8", "10"], correct: 0, explanation: "$\\frac{1}{2} \\cdot 16 = 8$, $\\frac{1}{2} \\cdot 4 = 2$, $8 - 2 = 6$" },
+            { text: "Calcular: $3^3 \\div 3^2 + 4^2 \\div 2^3$", options: ["5", "4", "3", "6", "7"], correct: 0, explanation: "$3 + 2 = 5$" }
+        ];
+
+        function getRandomQuestions(pool, count) {
+            const shuffled = [...pool];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, count);
+        }
+
+        let questions = [];
+        let userAnswers = [];
+        let testFinished = false;
+
+        function renderIndicators() {
+            const grid = document.getElementById('indicatorsGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator';
+                if (userAnswers[i] !== null) indicator.classList.add('answered');
+                indicator.textContent = i + 1;
+                indicator.addEventListener('click', (function(idx) {
+                    return function() {
+                        const slide = document.getElementById(`slide-${idx}`);
+                        if (slide) slide.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    };
+                })(i));
+                grid.appendChild(indicator);
+            }
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('slidesContainer');
+            container.innerHTML = '';
+            for (let i = 0; i < questions.length; i++) {
+                const q = questions[i];
+                const slideDiv = document.createElement('div');
+                slideDiv.className = 'slide';
+                slideDiv.id = `slide-${i}`;
+                slideDiv.innerHTML = `
+                    <div class="question-card">
+                        <div class="question-text">${i+1}. ${q.text}</div>
+                        <div class="options" id="options-${i}">
+                            ${q.options.map((opt, idx) => `
+                                <div class="option" data-opt-index="${idx}">
+                                    <input type="radio" name="q${i}" id="q${i}_opt${idx}" value="${idx}" ${userAnswers[i] === idx ? 'checked' : ''} ${testFinished ? 'disabled' : ''}>
+                                    <label for="q${i}_opt${idx}">${String.fromCharCode(65+idx)}) ${opt}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="slide-number">Pregunta ${i+1} de ${questions.length}</div>
+                    </div>
+                `;
+                container.appendChild(slideDiv);
+                renderKatexInElement(slideDiv);
+                if (!testFinished) {
+                    const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                    radios.forEach(radio => {
+                        radio.addEventListener('change', (e) => {
+                            if (!testFinished) {
+                                userAnswers[i] = parseInt(e.target.value);
+                                renderIndicators();
+                            }
+                        });
+                    });
+                }
+            }
+            // renderKatexInElement(container); // No es necesario, ya se hizo por cada slide
+        }
+
+        function calculateGrade(correctCount, total) {
+            const percentCorrect = correctCount / total;
+            if (percentCorrect <= 0.6) return 1 + (percentCorrect / 0.6) * 3;
+            else return 4 + ((percentCorrect - 0.6) / 0.4) * 3;
+        }
+
+        function finishExam() {
+            if (testFinished) return;
+            testFinished = true;
+            let correctCount = 0;
+            const results = [];
+            for (let i = 0; i < questions.length; i++) {
+                const isCorrect = (userAnswers[i] === questions[i].correct);
+                if (isCorrect) correctCount++;
+                results.push({
+                    question: questions[i].text,
+                    userAnswer: userAnswers[i],
+                    correctAnswer: questions[i].correct,
+                    isCorrect: isCorrect,
+                    explanation: questions[i].explanation,
+                    options: questions[i].options
+                });
+            }
+            const grade = calculateGrade(correctCount, questions.length);
+            const gradeRounded = Math.round(grade * 10) / 10;
+            const percentage = Math.round((correctCount / questions.length) * 100);
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <h2>📊 Resultados del Test</h2>
+                <div class="score-box">
+                    <p>✅ Respuestas correctas: ${correctCount} / ${questions.length}</p>
+                    <p>📈 Porcentaje: ${percentage}%</p>
+                    <h3>🎓 Nota: ${gradeRounded}</h3>
+                    <p>${gradeRounded >= 4 ? '✨ APROBADO ✨' : '📚 REPROBADO - Sigue practicando 📚'}</p>
+                </div>
+                <div id="detailedResults"></div>
+                <div class="action-buttons">
+                    <button class="action-btn restart-btn" id="restartBtn"><i class="fas fa-sync-alt"></i> Reiniciar Test</button>
+                    <a href="matematicas.html" class="action-btn math-btn"><i class="fas fa-arrow-left"></i> Volver a Matemáticas</a>
+                </div>
+            `;
+            const detailedDiv = document.getElementById('detailedResults');
+            for (let i = 0; i < results.length; i++) {
+                const r = results[i];
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `result-question ${r.isCorrect ? 'correct' : 'incorrect'}`;
+                const userLetter = r.userAnswer !== null ? String.fromCharCode(65 + r.userAnswer) : '?';
+                const correctLetter = String.fromCharCode(65 + r.correctAnswer);
+                const userAnswerText = r.userAnswer !== null ? r.options[r.userAnswer] : 'No respondida';
+                resultDiv.innerHTML = `
+                    <strong>Pregunta ${i+1}:</strong> ${r.question}<br>
+                    <span>📌 Tu respuesta: ${userLetter}) ${userAnswerText}</span><br>
+                    <span>✅ Respuesta correcta: ${correctLetter}) ${r.options[r.correctAnswer]}</span>
+                    ${!r.isCorrect ? `<div class="explanation">📖 <strong>Desarrollo correcto:</strong><br>${r.explanation}</div>` : '<div class="explanation">✓ ¡Respuesta correcta!</div>'}
+                `;
+                detailedDiv.appendChild(resultDiv);
+                renderKatexInElement(resultDiv);
+            }
+            renderKatexInElement(resultsContainer);
+            document.getElementById('resultsOverlay').style.display = 'block';
+            document.getElementById('restartBtn').addEventListener('click', () => {
+                location.reload();
+            });
+            for (let i = 0; i < questions.length; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.disabled = true);
+            }
+        }
+
+        function initTest() {
+            const todasPreguntas = [...poolEnteros, ...poolRacionales, ...poolPotencias, ...poolExponenciales, ...poolCombinadas];
+            // Seleccionar 8 de cada pool (40 en total)
+            const seleccionEnteros = getRandomQuestions(poolEnteros, 8);
+            const seleccionRacionales = getRandomQuestions(poolRacionales, 8);
+            const seleccionPotencias = getRandomQuestions(poolPotencias, 8);
+            const seleccionExponenciales = getRandomQuestions(poolExponenciales, 8);
+            const seleccionCombinadas = getRandomQuestions(poolCombinadas, 8);
+            questions = [...seleccionEnteros, ...seleccionRacionales, ...seleccionPotencias, ...seleccionExponenciales, ...seleccionCombinadas];
+            // Mezclar si quieres mantener agrupadas (no mezclar)
+            userAnswers = new Array(40).fill(null);
+            testFinished = false;
+            renderQuestions();
+            renderIndicators();
+        }
+
+        let currentSlide = 0;
+        function goToSlide(index) {
+            const slides = document.querySelectorAll('.slide');
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+            currentSlide = index;
+            slides[currentSlide]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!testFinished && document.getElementById('resultsOverlay').style.display !== 'block') {
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    goToSlide(currentSlide + 1);
+                }
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    goToSlide(currentSlide - 1);
+                }
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => { if (!testFinished) goToSlide(currentSlide - 1); });
+        document.getElementById('nextBtn').addEventListener('click', () => { if (!testFinished) goToSlide(currentSlide + 1); });
+        document.getElementById('finishBtn').addEventListener('click', finishExam);
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const slides = Array.from(document.querySelectorAll('.slide'));
+                    currentSlide = slides.indexOf(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        initTest();
+        setTimeout(() => {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => observer.observe(slide));
+        }, 100);
+    </script>
+</body>
+</html>
