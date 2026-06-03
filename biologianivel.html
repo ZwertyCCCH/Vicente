@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Clase 1° Medio: Evolución y Biodiversidad | Biología Chile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f7e8;
+            color: #1e2f23;
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        /* Contenedor principal */
+        .clase-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            padding: 1.5rem 2rem 2rem 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #2e7d32;
+            padding-bottom: 1rem;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            color: #1b5e20;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            font-size: 1.1rem;
+            color: #2c5e2a;
+            font-weight: 500;
+            background: #e8f5e9;
+            display: inline-block;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            margin-top: 0.5rem;
+        }
+
+        /* Navegación temática */
+        .nav-temas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            background: #e9f5e6;
+            padding: 0.8rem;
+            border-radius: 60px;
+        }
+        .btn-tema {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            color: #1e3a1e;
+        }
+        .btn-tema:hover {
+            background: #c8e6c9;
+        }
+        .btn-tema.activo {
+            background: #2e7d32;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Secciones de contenido */
+        .seccion {
+            display: none;
+            animation: fade 0.3s ease;
+        }
+        .seccion.activa {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* Tarjetas estilo */
+        .card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.8rem;
+            padding: 1.3rem 1.8rem;
+            border-left: 8px solid #4caf50;
+            transition: 0.2s;
+        }
+        .card h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.6rem;
+            color: #2b5e2b;
+            margin-bottom: 1rem;
+            border-left: 4px solid #81c784;
+            padding-left: 15px;
+        }
+        .card h3 {
+            font-size: 1.3rem;
+            color: #2e6b2f;
+            margin: 1rem 0 0.5rem 0;
+        }
+        .grid-ejemplos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .ejemplo-item {
+            background: #fef9e6;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            border: 1px solid #e0e7d9;
+        }
+        .badge {
+            background: #c8e6c9;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        .tabla-conceptos {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fafaf5;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .tabla-conceptos th, .tabla-conceptos td {
+            border: 1px solid #d0dbc4;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .tabla-conceptos th {
+            background: #c5e0b4;
+        }
+        /* preguntas finales */
+        .quiz-area {
+            background: #eef2e3;
+            padding: 1.5rem;
+            border-radius: 1.8rem;
+            margin-top: 2.5rem;
+        }
+        .pregunta {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .respuesta-ejemplo {
+            background: #e8f0fe;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            color: #14532d;
+            display: none;
+        }
+        .btn-ver-resp {
+            background: #2e7d32;
+            border: none;
+            color: white;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            margin-top: 0.6rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #5f7e5a;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 700px) {
+            .clase-container { padding: 1rem; }
+            .card { padding: 1rem; }
+            .header h1 { font-size: 1.6rem; }
+        }
+        .iconito {
+            font-size: 1.4rem;
+        }
+    </style>
+</head>
+<body>
+<div class="clase-container">
+    <div class="header">
+        <h1>🌿 Evolución y Biodiversidad · 1° Medio Chile</h1>
+        <p>📚 Unidad de restitución + Evolución | Basado en MRS CREN, nutrición vegetal y evidencias evolutivas</p>
+    </div>
+
+    <!-- Navegación rápida por temas -->
+    <div class="nav-temas">
+        <button class="btn-tema" data-tema="restitucion">🧬 Seres vivos (MRS CREN)</button>
+        <button class="btn-tema" data-tema="nutricion">🌱 Nutrición vegetal</button>
+        <button class="btn-tema" data-tema="evolucion">🦕 Evolución y evidencias</button>
+        <button class="btn-tema" data-tema="biodiversidad">🌎 Biodiversidad & Taxonomía</button>
+        <button class="btn-tema" data-tema="preguntas">✏️ Preguntas tipo evaluación</button>
+    </div>
+
+    <!-- SECCIÓN 1: UNIDAD DE RESTITUCIÓN - SERES VIVOS MRS CREN -->
+    <div id="restitucion" class="seccion activa">
+        <div class="card">
+            <h2>🧫 Características de los seres vivos: MRS CREN</h2>
+            <p><strong>MRS CREN</strong> es un acrónimo para recordar las funciones vitales: <strong>M</strong>ovimiento, <strong>R</strong>espiración, <strong>S</strong>ensibilidad, <strong>C</strong>recimiento, <strong>R</strong>eproducción, <strong>E</strong>xcreción, <strong>N</strong>utrición. Todo ser vivo las cumple.</p>
+            <div class="grid-ejemplos">
+                <div class="ejemplo-item"><span class="badge">🏃 Movimiento</span> Cambio de posición o desplazamiento. Ej: Una planta mueve sus hojas hacia el sol (fototropismo).</div>
+                <div class="ejemplo-item"><span class="badge">💨 Respiración</span> Intercambio de gases. Ej: Humanos inhalamos O₂ y exhalamos CO₂.</div>
+                <div class="ejemplo-item"><span class="badge">👁️ Sensibilidad</span> Reaccionar a estímulos. Ej: Una lombriz se aleja de la luz.</div>
+                <div class="ejemplo-item"><span class="badge">📏 Crecimiento</span> Aumento de tamaño y desarrollo. Ej: Un renacuajo se transforma en rana.</div>
+                <div class="ejemplo-item"><span class="badge">🥚 Reproducción</span> Generar descendencia. Ej: Perros tienen cachorros; plantas por semillas.</div>
+                <div class="ejemplo-item"><span class="badge">🚽 Excreción</span> Eliminar desechos metabólicos. Ej: Sudor, orina en animales.</div>
+                <div class="ejemplo-item"><span class="badge">🍎 Nutrición</span> Obtener materia y energía. Ej: Los hongos absorben nutrientes; las plantas realizan fotosíntesis.</div>
+            </div>
+            <p>📌 <strong>Importante:</strong> Un virus no cumple estas funciones por sí mismo → no se considera ser vivo.</p>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: NUTRICIÓN VEGETAL -->
+    <div id="nutricion" class="seccion">
+        <div class="card">
+            <h2>🌻 Nutrición vegetal: absorción y transporte</h2>
+            <p>Las plantas son autótrofas: producen su alimento mediante fotosíntesis. Para ello necesitan agua, sales minerales y CO₂.</p>
+            <h3>🔬 Pelos absorbentes (raíces)</h3>
+            <p>Son prolongaciones de las células epidérmicas de la raíz que aumentan la superficie de absorción. Absorben agua y minerales del suelo por ósmosis y transporte activo.</p>
+            <h3>🚰 Xilema y Floema: los sistemas de transporte</h3>
+            <ul>
+                <li><strong>Xilema:</strong> Transporta agua y sales minerales <strong>desde la raíz hacia las hojas</strong> (savia bruta).</li>
+                <li><strong>Floema:</strong> Transporta nutrientes orgánicos (azúcares) <strong>desde las hojas al resto de la planta</strong> (savia elaborada).</li>
+            </ul>
+            <h3>🍃 Intercambio de gases por estomas</h3>
+            <p>Los estomas son poros en hojas y tallos verdes. Permiten la entrada de CO₂ (para fotosíntesis) y salida de O₂ y vapor de agua. Regulados por células oclusivas.</p>
+            <div class="grid-ejemplos">
+                <div class="ejemplo-item"><strong>🌾 Ejemplo práctico:</strong> Si una planta no tiene pelos absorbentes, absorbe menos agua y se marchita.</div>
+                <div class="ejemplo-item"><strong>🍁 Sabías que:</strong> El xilema está formado por células muertas; el floema por células vivas.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 3: EVOLUCIÓN Y EVIDENCIAS + SELECCIÓN NATURAL -->
+    <div id="evolucion" class="seccion">
+        <div class="card">
+            <h2>🦴 Evolución: evidencias y teoría de selección natural</h2>
+            <p><strong>Evolución</strong> = cambios en las poblaciones a lo largo del tiempo. Charles Darwin propuso la selección natural.</p>
+            <h3>📜 Evidencias de la evolución</h3>
+            <div class="grid-ejemplos">
+                <div class="ejemplo-item"><strong>🪨 Fósiles y estratigrafía:</strong> Los fósiles en capas sedimentarias muestran organismos antiguos. Ej: fósiles de trilobites.</div>
+                <div class="ejemplo-item"><strong>🧬 Anatomía comparada:</strong> Órganos homólogos (mismo origen, diferente función) → ala de murciélago y brazo humano. Órganos análogos (misma función, origen distinto) → ala de insecto y ave. Órganos vestigiales → apéndice humano.</div>
+                <div class="ejemplo-item"><strong>🥚 Embriología comparada:</strong> Embriones de vertebrados tienen similitudes tempranas (hendiduras branquiales, cola).</div>
+                <div class="ejemplo-item"><strong>🧪 Biología molecular:</strong> Comparación de ADN y proteínas. Humanos y chimpancés comparten ~98-99% del ADN.</div>
+            </div>
+            <h3>🔁 Selección natural (Darwin)</h3>
+            <ul>
+                <li><strong>Variación:</strong> Individuos de una especie tienen diferencias (color, tamaño).</li>
+                <li><strong>Herencia:</strong> Muchas características se transmiten a la descendencia.</li>
+                <li><strong>Sobreproducción y competencia:</strong> Nacen más individuos de los que el ambiente puede soportar → luchan por recursos.</li>
+                <li><strong>Éxito reproductivo diferencial:</strong> Los mejor adaptados sobreviven y dejan más descendencia. A la larga, la población cambia.</li>
+            </ul>
+            <div class="ejemplo-item"><strong>🐞 Ejemplo clásico:</strong> Polillas del abedul en Inglaterra: con contaminación, las polillas oscuras se camuflaban mejor y aumentaron su frecuencia.</div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 4: BIODIVERSIDAD, TAXONOMÍA Y CLADÍSTICA -->
+    <div id="biodiversidad" class="seccion">
+        <div class="card">
+            <h2>🌍 Biodiversidad, Taxonomía y Cladística</h2>
+            <p><strong>Biodiversidad</strong> = variedad de vida en la Tierra: ecosistemas, especies y genes. Chile posee alta biodiversidad desde el desierto de Atacama hasta la Patagonia.</p>
+            <h3>🏷️ Taxonomía: ciencia de clasificar</h3>
+            <p>Sistema jerárquico: Dominio → Reino → Filo → Clase → Orden → Familia → Género → Especie. (Regla nemotécnica: "Don Rey Felipe no Clasifica Otra Familia sin Género")</p>
+            <table class="tabla-conceptos">
+                <tr><th>Categoría</th><th>Ejemplo: Ser humano</th></tr>
+                <tr><td>Reino</td><td>Animalia</td></tr>
+                <tr><td>Filo</td><td>Chordata</td></tr>
+                <tr><td>Clase</td><td>Mammalia</td></tr>
+                <tr><td>Orden</td><td>Primates</td></tr>
+                <tr><td>Familia</td><td>Hominidae</td></tr>
+                <tr><td>Género</td><td>Homo</td></tr>
+                <tr><td>Especie</td><td>Homo sapiens</td></tr>
+            </table>
+            <h3>🌿 Cladística</h3>
+            <p>Clasifica organismos según su ancestro común y características derivadas compartidas. Se representan en <strong>cladogramas</strong> (árboles evolutivos). Ejemplo: las aves descienden de dinosaurios terópodos.</p>
+            <div class="ejemplo-item"><strong>🔍 Dato:</strong> La taxonomía moderna usa ADN para reconstruir relaciones evolutivas (cladística molecular).</div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN PREGUNTAS DE EJEMPLO (TODA LA MATERIA) -->
+    <div id="preguntas" class="seccion">
+        <div class="card">
+            <h2>✏️ Ejemplos de preguntas (evaluación tipo 1° Medio)</h2>
+            <p>Responde mentalmente y revisa las respuestas ejemplo. Contenido: MRS CREN, nutrición vegetal, evidencia evolutiva, selección natural, taxonomía.</p>
+        </div>
+        <div class="quiz-area" id="quizArea"></div>
+    </div>
+
+    <footer>
+        🌟 Material diseñado para 1° Medio - Programa de Biología MINEDUC (Chile) | Clase integrada: Unidad restitución + Evolución y Biodiversidad
+    </footer>
+</div>
+
+<script>
+    // Arreglo de preguntas con respuesta ejemplo
+    const preguntasBanco = [
+        {
+            texto: "1. Una planta que orienta sus flores hacia el sol está manifestando la característica de los seres vivos llamada:",
+            respuesta: "Sensibilidad (reacción a estímulos externos, en este caso fototropismo)."
+        },
+        {
+            texto: "2. Menciona dos funciones del xilema y del floema en las plantas vasculares.",
+            respuesta: "Xilema: transporta agua y sales minerales (savia bruta) desde la raíz hacia las hojas. Floema: transporta nutrientes orgánicos (savia elaborada) desde las hojas al resto de la planta."
+        },
+        {
+            texto: "3. ¿Qué son los pelos absorbentes y por qué son importantes para la nutrición vegetal?",
+            respuesta: "Son prolongaciones de las células de la raíz que aumentan la superficie de absorción; permiten captar agua y minerales del suelo, fundamentales para la fotosíntesis y el metabolismo."
+        },
+        {
+            texto: "4. Explica la diferencia entre órganos homólogos y análogos, dando un ejemplo de cada uno.",
+            respuesta: "Homólogos: misma estructura de origen evolutivo, función diferente (ej: brazo humano y ala de murciélago). Análogos: misma función pero origen diferente (ej: ala de ave y ala de mariposa)."
+        },
+        {
+            texto: "5. ¿Qué evidencias de la evolución nos entregan los fósiles y la anatomía comparada?",
+            respuesta: "Los fósiles muestran organismos del pasado y cambios a través de capas geológicas (estratigrafía). La anatomía comparada revela similitudes estructurales que indican ancestros comunes (homologías) y adaptaciones convergentes (análogos)."
+        },
+        {
+            texto: "6. Describe los cuatro pilares de la selección natural propuesta por Darwin.",
+            respuesta: "1. Variación (individuos diferentes). 2. Herencia (características pasan a descendientes). 3. Sobreproducción y competencia (más nacimientos que recursos). 4. Éxito reproductivo diferencial (los más aptos dejan más crías, cambiando la población)."
+        },
+        {
+            texto: "7. ¿Qué es la biodiversidad y por qué es importante conservarla? Menciona dos razones.",
+            respuesta: "Biodiversidad es la variedad de formas de vida (genes, especies, ecosistemas). Es importante porque provee servicios ecosistémicos (agua limpia, polinización), recursos medicinales y estabilidad ambiental."
+        },
+        {
+            texto: "8. Ordena los niveles taxonómicos desde el más inclusivo al más específico: Reino, Género, Especie, Filo, Clase, Orden, Familia.",
+            respuesta: "Reino → Filo → Clase → Orden → Familia → Género → Especie."
+        },
+        {
+            texto: "9. ¿Qué función cumplen los estomas en las hojas?",
+            respuesta: "Permiten el intercambio de gases: entrada de CO₂ para fotosíntesis y salida de O₂ y vapor de agua (transpiración)."
+        },
+        {
+            texto: "10. ¿Qué es un cladograma y qué relación tiene con la cladística?",
+            respuesta: "Un cladograma es un diagrama ramificado que representa relaciones evolutivas entre especies basado en ancestros comunes y características derivadas. La cladística es el método que los construye usando datos morfológicos o moleculares."
+        }
+    ];
+
+    // Renderizar preguntas con botones de respuesta
+    function renderQuiz() {
+        const container = document.getElementById('quizArea');
+        if (!container) return;
+        container.innerHTML = '';
+        preguntasBanco.forEach((p, idx) => {
+            const preguntaDiv = document.createElement('div');
+            preguntaDiv.className = 'pregunta';
+            preguntaDiv.innerHTML = `
+                <p><strong>${p.texto}</strong></p>
+                <button class="btn-ver-resp" data-idx="${idx}">📖 Ver respuesta ejemplo</button>
+                <div id="respuesta-${idx}" class="respuesta-ejemplo">✅ ${p.respuesta}</div>
+            `;
+            container.appendChild(preguntaDiv);
+        });
+        // Agregar eventos a botones
+        document.querySelectorAll('.btn-ver-resp').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = btn.getAttribute('data-idx');
+                const respDiv = document.getElementById(`respuesta-${idx}`);
+                if (respDiv) {
+                    if (respDiv.style.display === 'none' || respDiv.style.display === '') {
+                        respDiv.style.display = 'block';
+                        btn.textContent = '🙈 Ocultar respuesta';
+                    } else {
+                        respDiv.style.display = 'none';
+                        btn.textContent = '📖 Ver respuesta ejemplo';
+                    }
+                }
+            });
+        });
+    }
+
+    // Lógica de navegación entre pestañas
+    const botones = document.querySelectorAll('.btn-tema');
+    const secciones = {
+        restitucion: document.getElementById('restitucion'),
+        nutricion: document.getElementById('nutricion'),
+        evolucion: document.getElementById('evolucion'),
+        biodiversidad: document.getElementById('biodiversidad'),
+        preguntas: document.getElementById('preguntas')
+    };
+
+    function activarSeccion(seccionId) {
+        // Oculta todas
+        Object.values(secciones).forEach(sec => {
+            if(sec) sec.classList.remove('activa');
+        });
+        // Muestra la seleccionada
+        if(secciones[seccionId]) {
+            secciones[seccionId].classList.add('activa');
+        }
+        // Actualiza estilo de botones
+        botones.forEach(btn => {
+            const tema = btn.getAttribute('data-tema');
+            if(tema === seccionId) {
+                btn.classList.add('activo');
+            } else {
+                btn.classList.remove('activo');
+            }
+        });
+        // Si es la sección de preguntas, se asegura render
+        if(seccionId === 'preguntas') {
+            renderQuiz();
+        }
+    }
+
+    botones.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tema = btn.getAttribute('data-tema');
+            if(tema && secciones[tema]) {
+                activarSeccion(tema);
+            }
+        });
+    });
+
+    // Inicializar: activar restitución por defecto, y precargar quiz si se requiere luego
+    activarSeccion('restitucion');
+    // Pre-cargar preguntas (para cuando se acceda ya esté listo)
+    renderQuiz(); // ya está en el DOM oculto? mejor cargar pero la sección preguntas no estará activa aún; pero el DOM existe
+    // Pero asegurar que cuando se abra preguntas se vea correcto
+    window.addEventListener('load', () => {
+        // Verificar que si ya está visible la seccion preguntas (no es el caso), renderizar.
+        if(secciones.preguntas && secciones.preguntas.classList.contains('activa')) renderQuiz();
+    });
+</script>
+</body>
+</html>
