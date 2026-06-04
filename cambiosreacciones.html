@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Clase Completa: Cambios Físicos y Químicos | Reacciones Químicas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: #eef2f5;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: #fcfdff;
+        }
+
+        .slides-wrapper {
+            width: 100%;
+            height: calc(100% - 70px);
+            overflow: hidden;
+        }
+
+        .slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            will-change: transform;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 2rem 2.5rem;
+            scrollbar-width: thin;
+            background: #fcfdff;
+            color: #1a2c3e;
+        }
+
+        .slide::-webkit-scrollbar { width: 6px; }
+        .slide::-webkit-scrollbar-track { background: #e0e7ef; }
+        .slide::-webkit-scrollbar-thumb { background: #5b8caf; border-radius: 8px; }
+
+        h1 {
+            font-size: 2.4rem;
+            color: #1f6392;
+            border-left: 7px solid #4c9ad9;
+            padding-left: 1.2rem;
+            margin-bottom: 1.2rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #2a6b4e;
+            margin: 1rem 0 0.6rem 0;
+            border-bottom: 2px solid #cbe0f0;
+            display: inline-block;
+            padding-bottom: 0.2rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: #2c7a4d;
+            margin: 0.8rem 0 0.4rem;
+        }
+
+        p, li {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 0.7rem;
+            color: #1f3445;
+            text-align: justify;
+        }
+
+        ul, .custom-list {
+            margin-left: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .highlight {
+            background: #e0f0fa;
+            padding: 0.1rem 0.3rem;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #0f5b8c;
+        }
+
+        .info-card {
+            background: #eff6fc;
+            border-left: 6px solid #4c9ad9;
+            padding: 0.8rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 18px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .question-sample {
+            background: #eef3e8;
+            border-radius: 24px;
+            padding: 1rem 1.8rem;
+            margin: 1.2rem 0 0.5rem;
+            border-left: 5px solid #4caf7f;
+        }
+
+        .badge {
+            background: #2a7f6e;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            display: inline-block;
+            margin-right: 0.6rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            border: 1px solid #cbdae9;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+            background: #ffffff;
+        }
+        th {
+            background: #ddeaf5;
+            font-weight: 600;
+        }
+
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: #f4f9fe;
+            border-top: 1px solid #cde0ef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+            backdrop-filter: blur(6px);
+        }
+
+        .btn-group { display: flex; gap: 1rem; }
+        .btn-footer {
+            background: #2c6e9e;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-footer:hover { background: #478fc2; transform: scale(1.02); }
+
+        .slide-counter {
+            background: #dfecf5;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            color: #1a4e6b;
+            font-weight: 500;
+        }
+
+        .nav-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(80, 130, 170, 0.5);
+            backdrop-filter: blur(3px);
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 2rem;
+            color: #1b3b4f;
+            transition: 0.2s;
+            z-index: 90;
+        }
+        .nav-arrow:hover { background: #3980b3; color: white; }
+        .nav-left { left: 16px; }
+        .nav-right { right: 16px; }
+
+        .img-placeholder {
+            background: #eaf1f9;
+            border-radius: 20px;
+            margin: 1rem 0;
+            padding: 0.8rem;
+            text-align: center;
+            font-style: italic;
+            color: #2c5a7a;
+            border: 1px dashed #8fb7d4;
+        }
+        .img-placeholder img {
+            max-width: 100%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 700px) {
+            .slide { padding: 1rem; }
+            h1 { font-size: 1.6rem; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation-container">
+    <div class="slides-wrapper">
+        <div class="slides" id="slidesContainer">
+            <!-- SLIDE 1: Introducción cambios de la materia -->
+            <div class="slide">
+                <h1>🧪 Cambios en la materia: físicos y químicos</h1>
+                <p>La materia que nos rodea está en constante transformación. Algunas transformaciones son reversibles y no alteran la composición interna de las sustancias, mientras que otras generan nuevas sustancias con propiedades diferentes. Comprender estos procesos es esencial para la química y nuestra vida cotidiana.</p>
+                <div class="info-card"><strong>📘 Idea clave:</strong><br> Un <span class="highlight">cambio físico</span> no modifica la naturaleza química de la materia. Un <span class="highlight">cambio químico</span> (reacción) transforma unas sustancias en otras distintas.</div>
+                <div class="grid-2">
+                    <div class="info-card"><strong>❄️ Cambio físico</strong><br>• Fusión del hielo (agua sólida → agua líquida)<br>• Disolver azúcar en agua<br>• Romper un vidrio<br>• Evaporación del alcohol</div>
+                    <div class="info-card"><strong>🔥 Cambio químico</strong><br>• Quemar madera (se forma ceniza, CO₂)<br>• Oxidación del hierro (herrumbre)<br>• Digestión de alimentos<br>• Fermentación de la fruta</div>
+                </div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Cuál es la diferencia fundamental entre un cambio físico y un cambio químico?</p><p><strong>Respuesta:</strong> En el cambio físico la sustancia sigue siendo la misma, solo varía su forma o estado (ejemplo: agua líquida y hielo son H₂O). En el cambio químico se forman nuevas sustancias con propiedades diferentes y composición molecular distinta (ejemplo: hierro + oxígeno → óxido de hierro).</p></div>
+            </div>
+
+            <!-- SLIDE 2: Reacción química y teoría de colisiones -->
+            <div class="slide">
+                <h2>⚡ Reacción química y teoría de las colisiones</h2>
+                <p>Una <span class="highlight">reacción química</span> es un proceso en el cual unas sustancias (reactivos) se transforman en otras nuevas (productos) mediante la reorganización de átomos y enlaces químicos.</p>
+                <p>Para explicar cómo ocurren las reacciones, la <strong>teoría de las colisiones</strong> establece que las partículas (átomos, moléculas o iones) deben chocar entre sí para que ocurra una reacción. Sin embargo, no todo choque produce reacción; se requieren condiciones específicas.</p>
+                <div class="info-card"><strong>📘 Postulados de la teoría de colisiones:</strong><br>
+                1️⃣ Las partículas deben <strong>colisionar</strong> entre sí.<br>
+                2️⃣ Deben tener la <strong>energía suficiente</strong> (energía de activación).<br>
+                3️⃣ Deben tener una <strong>orientación adecuada</strong> para romper y formar enlaces.
+                </div>
+                <div class="img-placeholder"><img src="https://i.ibb.co/hxpZ32sh/image.png" alt="Representación de colisión molecular efectiva vs inefectiva"><br><span>Choque efectivo: energía suficiente y orientación correcta. Choque inefectivo: baja energía o mala orientación.</span></div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Por qué no todos los choques entre moléculas producen una reacción química?</p><p><strong>Respuesta:</strong> Porque, según la teoría de las colisiones, se requiere que las moléculas choquen con la <strong>energía de activación</strong> necesaria (superar una barrera energética) y con la <strong>orientación espacial adecuada</strong> para que los enlaces se rompan y se formen nuevos. Si falta energía o la orientación es incorrecta, las moléculas rebotan sin reaccionar.</p></div>
+            </div>
+
+            <!-- SLIDE 3: Energía de activación y choque efectivo -->
+            <div class="slide">
+                <h2>📈 Energía de activación y choque efectivo</h2>
+                <p>La <span class="highlight">energía de activación (Ea)</span> es la energía mínima que deben tener las partículas al colisionar para que los enlaces se rompan y se puedan formar nuevos productos. Es como una "barrera" que debe superarse.</p>
+                <div class="info-card"><strong>💡 Analogía:</strong> Para rodar una piedra cuesta arriba, necesitas empujar con suficiente fuerza para superar la cima (energía de activación). Una vez superada, la piedruede bajar sola (reacción exotérmica).</div>
+                <p><strong>Choque efectivo:</strong> colisión que cumple con energía suficiente y orientación favorable → genera productos. Factores que afectan la velocidad de reacción: temperatura, concentración, superficie de contacto y catalizadores (disminuyen Ea).</p>
+                <div class="grid-2">
+                    <div class="info-card"><strong>📉 Factores que aumentan choques efectivos:</strong><br>✔️ Aumentar temperatura (más energía cinética)<br>✔️ Aumentar concentración (más partículas)<br>✔️ Mayor superficie (sólidos pulverizados)<br>✔️ Catalizador (reduce Ea)</div>
+                    <div class="info-card"><strong>🔬 Ejemplo cotidiano:</strong> El agua oxigenada se descompone lentamente, pero al añadir yodo o catalasa (de la sangre) se acelera drásticamente porque disminuye la energía de activación.</div>
+                </div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Qué es un choque efectivo y cómo se relaciona con la energía de activación?</p><p><strong>Respuesta:</strong> Un choque efectivo es aquel que produce una reacción química. Para que sea efectivo, las partículas deben colisionar con una energía <strong>igual o mayor a la energía de activación</strong> y con la orientación geométrica adecuada. La energía de activación es la barrera mínima a superar para iniciar la ruptura de enlaces.</p></div>
+            </div>
+
+            <!-- SLIDE 4: Partes de una ecuación química -->
+            <div class="slide">
+                <h2>📝 Partes de una ecuación química</h2>
+                <p>Una <strong>ecuación química</strong> es la representación simbólica de una reacción química. Indica qué sustancias reaccionan (reactivos) y cuáles se producen (productos), además de las proporciones en que lo hacen.</p>
+                <div class="info-card"><strong>🧪 Estructura general:</strong><br>
+                <span style="font-size:1.2rem;">Reactivos → Productos</span><br>
+                Ejemplo: <strong>CH₄  +  2 O₂  →  CO₂  +  2 H₂O</strong><br>
+                (metano) (oxígeno) → (dióxido de carbono) (agua)
+                </div>
+                <h3>🔍 Componentes esenciales</h3>
+                <ul>
+                    <li><strong>Reactivos:</strong> Sustancias iniciales (lado izquierdo).</li>
+                    <li><strong>Productos:</strong> Sustancias finales (lado derecho).</li>
+                    <li><strong>Coeficientes estequiométricos:</strong> Números que indican la cantidad de moléculas o moles (ej: 2 O₂).</li>
+                    <li><strong>Símbolos de estado físico:</strong> (s) sólido, (l) líquido, (g) gas, (ac) acuoso.</li>
+                    <li><strong>Flecha (→):</strong> Indica el sentido de la transformación. En equilibrios se usa ⇌.</li>
+                    <li><strong>Condiciones:</strong> Sobre la flecha a veces se indica calor (Δ), catalizador, presión, etc.</li>
+                </ul>
+                <div class="img-placeholder"><img src="https://i.ibb.co/1fxxfL6F/image.png" alt="Diagrama partes ecuación química: reactivos, flecha, productos, coeficientes"><br><span>Identificación visual de reactivos, productos, coeficientes y estados de agregación.</span></div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Qué información proporcionan los coeficientes estequiométricos y los subíndices en una ecuación química?</p><p><strong>Respuesta:</strong> Los <strong>subíndices</strong> indican la cantidad de átomos de cada elemento dentro de una molécula (ej: H₂O tiene 2 H y 1 O). Los <strong>coeficientes</strong> indican la cantidad de moléculas o moles que participan (ej: 2 H₂O significa dos moléculas de agua). Juntos respetan la ley de conservación de la masa.</p></div>
+            </div>
+
+            <!-- SLIDE 5: Tipos de reacciones y ejemplos balanceados -->
+            <div class="slide">
+                <h2>⚖️ Tipos comunes de reacciones químicas</h2>
+                <p>Clasificar las reacciones ayuda a predecir los productos. Los principales tipos son:</p>
+                <ul>
+                    <li><strong>Síntesis o combinación:</strong> A + B → AB  (ej: 2H₂ + O₂ → 2H₂O)</li>
+                    <li><strong>Descomposición:</strong> AB → A + B   (ej: 2HgO → 2Hg + O₂)</li>
+                    <li><strong>Desplazamiento simple:</strong> A + BC → AC + B  (ej: Zn + 2HCl → ZnCl₂ + H₂)</li>
+                    <li><strong>Doble desplazamiento:</strong> AB + CD → AD + CB (ej: AgNO₃ + NaCl → AgCl + NaNO₃)</li>
+                    <li><strong>Combustión:</strong> Sustancia + O₂ → CO₂ + H₂O (ej: CH₄ + 2O₂ → CO₂ + 2H₂O)</li>
+                </ul>
+                <div class="info-card"><strong>📌 Ley de conservación de la masa (Lavoisier):</strong> En una reacción química, la masa total de los reactivos es igual a la masa total de los productos. Por eso se balancean las ecuaciones.</div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Cuál es la diferencia entre una reacción de síntesis y una de descomposición? Da un ejemplo de cada una.</p><p><strong>Respuesta:</strong> En la síntesis, dos o más sustancias se combinan para formar un producto más complejo (ej: 2Mg + O₂ → 2MgO). En la descomposición, una sustancia se divide en dos o más productos más simples (ej: 2H₂O₂ → 2H₂O + O₂).</p></div>
+            </div>
+
+            <!-- SLIDE 6: Formas de identificar una reacción química (evidencias) -->
+            <div class="slide">
+                <h2>🔍 Señales: ¿cómo saber si ocurre una reacción química?</h2>
+                <p>Existen evidencias observables que indican la formación de nuevas sustancias. No siempre aparecen todas, pero algunas son claves:</p>
+                <div class="grid-2">
+                    <div class="info-card"><strong>💨 1. Liberación o absorción de energía</strong><br>• Cambio de temperatura (frialdad o calor)<br>• Emisión de luz (combustión)</div>
+                    <div class="info-card"><strong>🎨 2. Cambio de color</strong><br>• Manzana que se oxida y se vuelve marrón<br>• Indicador de pH (viraje)</div>
+                    <div class="info-card"><strong>💨 3. Formación de un precipitado</strong><br>• Sólido insoluble que aparece al mezclar líquidos<br>Ej: AgNO₃ + NaCl → AgCl (sólido blanco)</div>
+                    <div class="info-card"><strong>💨 4. Producción de gas (efervescencia)</strong><br>• Burbujas sin calentamiento<br>Ej: bicarbonato + vinagre → CO₂</div>
+                    <div class="info-card"><strong>✨ 5. Cambio de olor</strong><br>• Alimento descompuesto, olor a azufre, a huevo podrido</div>
+                    <div class="info-card"><strong>⚡ 6. Cambio irreversible</strong><br>• No se puede volver fácilmente al estado original (quemar papel)</div>
+                </div>
+                <div class="img-placeholder"><img src="https://i.ibb.co/CKbwj4ft/image.png" alt="Fotografías de efervescencia, precipitado, cambio de color"><br><span>Evidencias visibles: burbujas (gas), precipitado blanco y coloración diferente.</span></div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> Menciona tres evidencias que indican que ha ocurrido una reacción química y explica cada una.</p><p><strong>Respuesta:</strong> 1) <strong>Desprendimiento de gas</strong> (burbujas sin hervir, como al mezclar vinagre y bicarbonato). 2) <strong>Cambio de color</strong> (ejemplo: oxidación de una fruta). 3) <strong>Formación de precipitado</strong> (sólido que aparece en un líquido transparente). También se considera cambio de temperatura sin fuente externa.</p></div>
+            </div>
+
+            <!-- SLIDE 7: Ejemplos cotidianos y laboratorio -->
+            <div class="slide">
+                <h2>🏠 Reacciones químicas en la vida diaria</h2>
+                <p>Las reacciones químicas están en todas partes: en la cocina, el cuerpo humano, la naturaleza y la tecnología.</p>
+                <ul>
+                    <li><strong>Respiración celular:</strong> C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + energía</li>
+                    <li><strong>Corrosión:</strong> 4Fe + 3O₂ → 2Fe₂O₃ (óxido férrico)</li>
+                    <li><strong>Fotosíntesis:</strong> 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂ (luz)</li>
+                    <li><strong>Cocción de alimentos:</strong> Las proteínas se desnaturalizan y se producen nuevas moléculas aromáticas.</li>
+                    <li><strong>Baterías:</strong> reacciones redox generan electricidad.</li>
+                </ul>
+                <div class="info-card"><strong>⚠️ Dato importante:</strong> Un cambio físico, como derretir cera, no produce nuevas sustancias. Cuando una vela arde (cera + oxígeno → CO₂ + H₂O) es una reacción química.</div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿La oxidación de un clavo de hierro es un cambio químico o físico? Justifica con evidencias.</p><p><strong>Respuesta:</strong> Es un cambio químico porque se forma una nueva sustancia (óxido de hierro), de color marrón y textura quebradiza, diferente al metal original. Además es irreversible bajo condiciones normales y evidencia cambio de color y propiedades.</p></div>
+            </div>
+
+            <!-- SLIDE 8: Balanceo de ecuaciones (método simple) -->
+            <div class="slide">
+                <h2>⚙️ Balanceo de ecuaciones químicas</h2>
+                <p>Para cumplir la ley de conservación de la masa, una ecuación debe tener igual número de átomos de cada elemento en reactivos y productos.</p>
+                <h3>Ejemplo paso a paso:</h3>
+                <p><strong>Reacción no balanceada:</strong> Fe + O₂ → Fe₂O₃</p>
+                <ol>
+                    <li>Contar átomos: Fe (1 en reactivos, 2 en productos) ; O (2 en reactivos, 3 en productos).</li>
+                    <li>Balancear Fe: colocar coeficiente 2 en Fe → 2Fe + O₂ → Fe₂O₃</li>
+                    <li>Balancear O: necesitamos 3 átomos de O en reactivos → usar 3/2 O₂ (evitamos fracciones). Mejor multiplicar toda la ecuación por 2: <strong>4Fe + 3O₂ → 2Fe₂O₃</strong></li>
+                    <li>Verificar: 4 Fe y 6 O en ambos lados ✅</li>
+                </ol>
+                <div class="info-card"><strong>📐 Método de tanteo:</strong> Se prueban coeficientes enteros hasta igualar todos los elementos. Recomendación: balancear metales primero, luego no metales, después oxígeno e hidrógeno al final.</div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Por qué es importante balancear las ecuaciones químicas?</p><p><strong>Respuesta:</strong> Es fundamental porque refleja la realidad: los átomos no se crean ni destruyen durante una reacción. Una ecuación balanceada respeta la ley de conservación de la masa y permite realizar cálculos estequiométricos precisos (cantidades de reactivos y productos).</p></div>
+            </div>
+
+            <!-- SLIDE 9: Factores que afectan velocidad de reacción -->
+            <div class="slide">
+                <h2>⏩ Factores que modifican la velocidad de reacción</h2>
+                <p>La velocidad de una reacción química depende de la frecuencia y efectividad de los choques. Podemos alterarla mediante:</p>
+                <ul>
+                    <li><strong>Temperatura:</strong> Al aumentar la temperatura, las partículas se mueven más rápido → más colisiones con energía ≥ Ea.</li>
+                    <li><strong>Concentración:</strong> Mayor número de partículas por unidad de volumen → mayor probabilidad de choques.</li>
+                    <li><strong>Superficie de contacto:</strong> Si un reactivo es sólido, al triturarlo aumenta el área expuesta → más choques.</li>
+                    <li><strong>Catalizadores:</strong> Sustancias que aceleran la reacción sin consumirse, disminuyendo la energía de activación (ejemplo: enzimas biológicas, platino en autos).</li>
+                </ul>
+                <div class="grid-2">
+                    <div class="info-card"><strong>🧊 Ejemplo:</strong> Una pastilla efervescente entera tarda más en disolverse que si está pulverizada (mayor superficie).</div>
+                    <div class="info-card"><strong>🍳 Ejemplo:</strong> Los alimentos se cocinan más rápido a altas temperaturas porque aumenta velocidad de reacciones.</div>
+                </div>
+                <div class="question-sample"><p>❓ <strong>Pregunta:</strong> ¿Cómo influye un catalizador en la energía de activación y en la velocidad de reacción?</p><p><strong>Respuesta:</strong> Un catalizador proporciona una ruta alternativa con menor energía de activación, por lo que más partículas logran superar la barrera energética y la velocidad de reacción aumenta. El catalizador no se consume ni modifica los productos finales.</p></div>
+            </div>
+
+            <!-- SLIDE 10: Resumen y conexión con ejercicios -->
+            <div class="slide">
+                <h2>📌 Resumen: cambios y reacciones químicas</h2>
+                <ul>
+                    <li><strong>Cambios físicos:</strong> No alteran composición (estado, forma).</li>
+                    <li><strong>Cambios químicos (reacciones):</strong> Transforman reactivos en productos, evidencias como gas, color, precipitado o energía.</li>
+                    <li><strong>Teoría de colisiones:</strong> choque efectivo requiere energía de activación y orientación adecuada.</li>
+                    <li><strong>Ecuación química:</strong> reactivos → productos; balanceada por conservación de la masa.</li>
+                    <li><strong>Factores cinéticos:</strong> temperatura, concentración, superficie y catalizadores afectan velocidad.</li>
+                </ul>
+                <div class="info-card"><strong>🎯 Para practicar:</strong> Reconoce reacciones en tu entorno, intenta balancear ecuaciones sencillas y aplica las evidencias vistas. Los ejercicios te ayudarán a afianzar los conceptos.</div>
+                <div class="question-sample"><p>❓ <strong>Pregunta final de reflexión:</strong> ¿Por qué la formación de burbujas al hervir agua no es una reacción química, pero la efervescencia del bicarbonato con vinagre sí lo es?</p><p><strong>Respuesta:</strong> En la ebullición del agua solo hay cambio de estado (líquido a gas) sin alterar la molécula de H₂O. En cambio, bicarbonato + vinagre produce dióxido de carbono (nueva sustancia) mediante una reacción ácido-base, con evidencia de gas y cambio químico irreversible.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <div class="btn-group">
+            <button class="btn-footer" id="goToCourseBtn">📘 Ir al curso</button>
+            <button class="btn-footer" id="goToExercisesBtn">✍️ Ejercicios</button>
+        </div>
+        <div class="slide-counter" id="slideCounter">Slide 1 / 10</div>
+    </div>
+
+    <div class="nav-arrow nav-left" id="prevSlide">❮</div>
+    <div class="nav-arrow nav-right" id="nextSlide">❯</div>
+</div>
+
+<script>
+    const slidesContainer = document.getElementById('slidesContainer');
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+    const slideCounterSpan = document.getElementById('slideCounter');
+
+    function updateSlidePosition() {
+        slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+        slideCounterSpan.innerText = `Slide ${currentIndex+1} / ${totalSlides}`;
+    }
+    function nextSlide() { if (currentIndex < totalSlides-1) { currentIndex++; updateSlidePosition(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; updateSlidePosition(); } }
+
+    document.getElementById('nextSlide').addEventListener('click', nextSlide);
+    document.getElementById('prevSlide').addEventListener('click', prevSlide);
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { nextSlide(); e.preventDefault(); }
+        else if (e.key === 'ArrowLeft') { prevSlide(); e.preventDefault(); }
+    });
+
+    document.getElementById('goToCourseBtn').addEventListener('click', () => { window.location.href = 'quimica.html'; });
+    document.getElementById('goToExercisesBtn').addEventListener('click', () => { window.location.href = 'e-cambiosreacciones.html'; });
+    updateSlidePosition();
+</script>
+</body>
+</html>

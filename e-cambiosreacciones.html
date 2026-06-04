@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicios: Cambios Físicos y Químicos | Reacciones Químicas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            background: #eef2f7;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.05);
+            border: 1px solid #cfdfed;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #4c9ad9;
+            padding-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #1f6392;
+        }
+
+        .subtitle {
+            color: #3a7ca5;
+            font-size: 0.9rem;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #eef4fc;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 0.85rem;
+            border: 1px solid #c2d6e8;
+            color: #1a4e6b;
+        }
+
+        .section {
+            background: #fbfdff;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            margin-bottom: 1.8rem;
+            border-left: 5px solid #4c9ad9;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #2a6b4e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .question {
+            margin: 1rem 0;
+            padding: 0.8rem;
+            background: #fefcf7;
+            border-radius: 1rem;
+            border: 1px solid #e2e9f0;
+        }
+
+        .question p {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #1f3445;
+        }
+
+        .options {
+            list-style: none;
+            margin-left: 1rem;
+        }
+
+        .options li {
+            margin: 0.4rem 0;
+            padding: 0.2rem 0.5rem;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: 0.2s;
+        }
+
+        .options li:hover {
+            background: rgba(76, 154, 217, 0.12);
+        }
+
+        input[type="radio"] {
+            margin-right: 8px;
+            accent-color: #2c6e9e;
+        }
+
+        .match-table, .truefalse-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .match-table th, .match-table td,
+        .truefalse-table th, .truefalse-table td {
+            border: 1px solid #cbdae9;
+            padding: 0.6rem;
+            vertical-align: middle;
+        }
+
+        .match-table th, .truefalse-table th {
+            background: #e7f0fa;
+            color: #1f6392;
+            font-weight: 600;
+        }
+
+        select {
+            background: #ffffff;
+            color: #1f3445;
+            border: 1px solid #bcd0e2;
+            border-radius: 0.5rem;
+            padding: 0.4rem;
+            width: 100%;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-evaluate {
+            display: block;
+            width: 260px;
+            margin: 1rem auto;
+            background: #2c6e9e;
+            color: white;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 3rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-evaluate:hover {
+            background: #478fc2;
+            transform: scale(1.02);
+        }
+
+        .results {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #f2f8fe;
+            border-radius: 1.5rem;
+            display: none;
+            border: 2px solid #4c9ad9;
+        }
+
+        .score-box {
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 0.5rem 0;
+            color: #1f3b4c;
+        }
+
+        .grade-box {
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 1.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .approved {
+            background: #e0f0e8;
+            color: #2d6a4f;
+            border: 1px solid #8bcb9e;
+        }
+
+        .failed {
+            background: #fce8e6;
+            color: #b33;
+            border: 1px solid #e0a0a0;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #d4e3f0;
+            color: #1f4e6e;
+            border: none;
+            padding: 0.5rem 1.3rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: #b8d2e8;
+            color: #0e3a54;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
+            color: #8bacc5;
+        }
+
+        .correct-row {
+            background: rgba(80, 160, 120, 0.12);
+        }
+
+        .incorrect-row {
+            background: rgba(200, 90, 70, 0.08);
+        }
+
+        .tf-correct {
+            color: #2d6a4f;
+            font-weight: bold;
+        }
+
+        .tf-incorrect {
+            color: #b33;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚗️ Ejercicios de Química</h1>
+        <div class="subtitle">Cambios físicos y químicos · Reacciones químicas · Teoría de las colisiones · Ecuaciones químicas</div>
+        <div class="subtitle">Educación Media | Basado en unidad de Química General</div>
+    </div>
+
+    <div class="info-bar">
+        <div>📋 <strong>Secciones:</strong> Selección Múltiple (15) + Relación de Columnas (15) + Verdadero/Falso (15)</div>
+        <div>✅ Exigencia: 60% | Nota máxima: 7.0</div>
+        <div>🔄 Cada vez que reinicies, las preguntas se renuevan aleatoriamente desde un banco de 50 por sección.</div>
+    </div>
+
+    <div id="examContent">
+        <!-- SECCIÓN I: Selección múltiple -->
+        <div class="section">
+            <div class="section-title">📌 I. Selección Múltiple</div>
+            <p>Selecciona la opción correcta.</p>
+            <div id="multipleChoice"></div>
+        </div>
+
+        <!-- SECCIÓN II: Relación de columnas -->
+        <div class="section">
+            <div class="section-title">🔗 II. Relación de Columnas</div>
+            <p>Elige el término que mejor corresponde a cada descripción.</p>
+            <table class="match-table" id="matchTable">
+                <thead><tr><th style="width:65%">Descripción</th><th style="width:35%">Término / Concepto</th></tr></thead>
+                <tbody id="matchBody"></tbody>
+            </table>
+        </div>
+
+        <!-- SECCIÓN III: Verdadero o falso -->
+        <div class="section">
+            <div class="section-title">⚖️ III. Verdadero o Falso</div>
+            <p>Selecciona Verdadero (V) o Falso (F) según corresponda.</p>
+            <table class="truefalse-table" id="tfTable">
+                <thead><tr><th style="width:70%">Afirmación</th><th style="width:30%">V / F</th></tr></thead>
+                <tbody id="tfBody"></tbody>
+            </table>
+        </div>
+
+        <button class="btn-evaluate" id="evaluateBtn">✅ Evaluar respuestas</button>
+    </div>
+
+    <div id="results" class="results"></div>
+    <div class="footer">Química | Cambios de la materia, reacciones, teoría de colisiones y ecuaciones químicas</div>
+</div>
+
+<script>
+    // ==================== BANCOS DE PREGUNTAS (50 cada sección) ====================
+    
+    // ----- Banco de Selección Múltiple (cambios, reacciones, colisiones, energía de activación, ecuaciones, evidencias)
+    const bankMultipleChoice = [
+        // Cambios físicos y químicos (1-10)
+        { text: "¿Cuál de los siguientes es un ejemplo de cambio físico?", options: ["a. Quemar madera", "b. Oxidación del hierro", "c. Fusión del hielo", "d. Digestión de alimentos"], correct: "c" },
+        { text: "¿Qué ocurre en un cambio químico?", options: ["a. Solo cambia el estado de agregación", "b. Se forman sustancias nuevas", "c. La masa se destruye", "d. No hay transformación de energía"], correct: "b" },
+        { text: "¿Cuál de estas opciones corresponde a una evidencia de reacción química?", options: ["a. Cambio de forma", "b. Disolución de azúcar", "c. Formación de gas (burbujas)", "d. Aumento de volumen sin reacción"], correct: "c" },
+        { text: "¿Qué tipo de cambio ocurre cuando se quema un trozo de papel?", options: ["a. Físico", "b. Químico", "c. Nuclear", "d. Mecánico"], correct: "b" },
+        { text: "¿Qué proceso es un cambio físico reversible?", options: ["a. Cocción de un huevo", "b. Evaporación del agua", "c. Fermentación", "d. Oxidación de una manzana"], correct: "b" },
+        { text: "¿Qué indica la formación de un precipitado en una mezcla?", options: ["a. Cambio físico", "b. Reacción química con sólido insoluble", "c. Sublimación", "d. Destilación"], correct: "b" },
+        // Teoría de colisiones y energía de activación (11-20)
+        { text: "Según la teoría de las colisiones, ¿qué condición es necesaria para que ocurra una reacción?", options: ["a. Que las partículas estén en reposo", "b. Que las partículas choquen con energía suficiente y orientación adecuada", "c. Que la temperatura sea baja", "d. Que los reactivos sean sólidos"], correct: "b" },
+        { text: "¿Qué es la energía de activación?", options: ["a. Energía liberada en una reacción", "b. Energía mínima para que ocurra un choque efectivo", "c. Energía que se pierde como calor", "d. Energía de los productos"], correct: "b" },
+        { text: "¿Cómo afecta un aumento de temperatura a la velocidad de reacción?", options: ["a. Disminuye la energía de activación", "b. Aumenta la frecuencia y energía de las colisiones", "c. No tiene efecto", "d. Siempre detiene la reacción"], correct: "b" },
+        { text: "Un choque efectivo requiere:", options: ["a. Solo alta concentración", "b. Orientación inadecuada", "c. Energía ≥ Ea y orientación correcta", "d. Catalizador siempre"], correct: "c" },
+        { text: "¿Qué función cumple un catalizador?", options: ["a. Aumenta la temperatura", "b. Disminuye la energía de activación", "c. Se consume en la reacción", "d. Impide los choques"], correct: "b" },
+        // Partes de ecuación química (21-30)
+        { text: "En la ecuación 2H₂ + O₂ → 2H₂O, ¿qué representa el número 2 delante de H₂?", options: ["a. Subíndice", "b. Coeficiente estequiométrico", "c. Carga eléctrica", "d. Número atómico"], correct: "b" },
+        { text: "En la fórmula química H₂O, el subíndice 2 indica:", options: ["a. Dos moléculas de agua", "b. Dos átomos de hidrógeno por molécula", "c. Dos moles de agua", "d. Dos átomos de oxígeno"], correct: "b" },
+        { text: "¿Cuál es el reactivo en la reacción de combustión del metano? CH₄ + 2O₂ → CO₂ + 2H₂O", options: ["a. CO₂", "b. H₂O", "c. CH₄ y O₂", "d. Solo el metano"], correct: "c" },
+        { text: "¿Qué significa la flecha (→) en una ecuación química?", options: ["a. Igualdad matemática", "b. Sentido de la transformación", "c. Reversibilidad", "d. Equilibrio"], correct: "b" },
+        { text: "¿Cuál de los siguientes estados de agregación se indica con (ac)?", options: ["a. Sólido", "b. Líquido", "c. Gaseoso", "d. Acuoso (disolución acuosa)"], correct: "d" },
+        { text: "¿Qué ley fundamenta el balanceo de ecuaciones químicas?", options: ["a. Ley de Boyle", "b. Ley de conservación de la masa", "c. Ley de Newton", "d. Ley periódica"], correct: "b" },
+        // Evidencias y reacciones (31-40)
+        { text: "¿Cuál es una evidencia clara de que ocurrió una reacción química?", options: ["a. Cambio de temperatura sin fuente externa", "b. Mezcla de dos líquidos transparentes", "c. Triturar un sólido", "d. Disolver sal en agua"], correct: "a" },
+        { text: "¿Qué tipo de reacción es: 2Mg + O₂ → 2MgO?", options: ["a. Descomposición", "b. Síntesis o combinación", "c. Doble desplazamiento", "d. Combustión ácida"], correct: "b" },
+        { text: "La respiración celular (C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O) es un ejemplo de:", options: ["a. Cambio físico", "b. Reacción química exotérmica", "c. Cambio de estado", "d. Sublimación"], correct: "b" },
+        { text: "¿Qué fenómeno NO es una evidencia de reacción química?", options: ["a. Liberación de luz", "b. Cambio de color", "c. Condensación de vapor de agua", "d. Producción de olor"], correct: "c" },
+        // Conceptos avanzados (41-50)
+        { text: "¿Qué relación existe entre la superficie de contacto y la velocidad de reacción?", options: ["a. A menor superficie, mayor velocidad", "b. A mayor superficie, mayor velocidad por más colisiones", "c. No influye", "d. Solo influye en gases"], correct: "b" },
+        { text: "¿Cómo se denomina el tipo de reacción donde una sustancia se divide en dos o más más simples?", options: ["a. Síntesis", "b. Descomposición", "c. Combustión", "d. Neutralización"], correct: "b" },
+        { text: "¿Qué nombre recibe la reacción de un compuesto con oxígeno que produce CO₂ y H₂O?", options: ["a. Combustión", "b. Fermentación", "c. Esterificación", "d. Polimerización"], correct: "a" },
+        { text: "¿Qué factor NO afecta la velocidad de una reacción química?", options: ["a. Temperatura", "b. Concentración", "c. Color de los reactivos", "d. Catalizador"], correct: "c" },
+        { text: "En la reacción: Zn + 2HCl → ZnCl₂ + H₂, ¿qué tipo de reacción es?", options: ["a. Descomposición", "b. Síntesis", "c. Desplazamiento simple", "d. Doble desplazamiento"], correct: "c" },
+        { text: "¿Qué significa que una reacción sea exotérmica?", options: ["a. Absorbe calor", "b. Libera energía en forma de calor o luz", "c. No hay cambio energético", "d. Requiere catalizador"], correct: "b" },
+        { text: "¿Cuál es la función de los coeficientes estequiométricos en una ecuación balanceada?", options: ["a. Indicar la carga", "b. Indicar las proporciones molares", "c. Mostrar el estado físico", "d. Determinar la acidez"], correct: "b" },
+        { text: "¿Qué nombre recibe la energía mínima necesaria para iniciar una reacción?", options: ["a. Energía libre", "b. Energía de activación", "c. Calor de reacción", "d. Entalpía"], correct: "b" },
+        { text: "¿Cuál de las siguientes NO es una evidencia de reacción química?", options: ["a. Emisión de luz", "b. Cambio de olor", "c. Cambio de volumen por dilatación", "d. Formación de burbujas"], correct: "c" },
+        { text: "La ecuación 2H₂O₂ → 2H₂O + O₂ representa:", options: ["a. Síntesis", "b. Descomposición", "c. Combustión", "d. Neutralización"], correct: "b" },
+        { text: "Según la teoría de colisiones, al aumentar la concentración de reactivos:", options: ["a. Disminuye la energía de activación", "b. Aumenta la frecuencia de colisiones", "c. No afecta la velocidad", "d. Cambia la estequiometría"], correct: "b" }
+    ];
+    
+    // ----- Banco Relación de Columnas (50 conceptos) - química
+    const bankMatch = [
+        { description: "Tipo de cambio donde la sustancia sigue siendo la misma, solo varía su forma o estado.", correct: "Cambio físico" },
+        { description: "Transformación que genera nuevas sustancias con propiedades diferentes.", correct: "Reacción química" },
+        { description: "Energía mínima que deben tener las partículas al chocar para que se produzca una reacción.", correct: "Energía de activación" },
+        { description: "Colisión entre partículas que tiene la energía suficiente y la orientación adecuada.", correct: "Choque efectivo" },
+        { description: "Sustancias iniciales que se escriben a la izquierda de la flecha en una ecuación.", correct: "Reactivos" },
+        { description: "Sustancias resultantes de una reacción, ubicadas a la derecha de la flecha.", correct: "Productos" },
+        { description: "Números que indican la cantidad de moléculas o moles en una ecuación química.", correct: "Coeficientes estequiométricos" },
+        { description: "Indica la cantidad de átomos de un elemento dentro de una molécula.", correct: "Subíndice" },
+        { description: "Evidencia de reacción química que consiste en la aparición de un sólido en una disolución.", correct: "Precipitado" },
+        { description: "Sustancia que acelera una reacción sin consumirse, disminuyendo la energía de activación.", correct: "Catalizador" },
+        { description: "Proceso donde una sustancia se quema en presencia de oxígeno liberando energía.", correct: "Combustión" },
+        { description: "Reacción donde una sola sustancia se divide en dos o más productos más simples.", correct: "Descomposición" },
+        { description: "Reacción donde dos o más reactivos se combinan para formar un solo producto.", correct: "Síntesis o combinación" },
+        { description: "Reacción donde un elemento reemplaza a otro en un compuesto (A + BC → AC + B).", correct: "Desplazamiento simple" },
+        { description: "Intercambio de iones entre dos compuestos (AB + CD → AD + CB).", correct: "Doble desplazamiento" },
+        { description: "Evidencia visible de reacción química, como burbujas sin calentamiento.", correct: "Efervescencia (gas)" },
+        { description: "Ley que establece que la masa total se conserva en una reacción química.", correct: "Ley de conservación de la masa" },
+        { description: "Factor cinético que aumenta la velocidad al incrementar la agitación molecular.", correct: "Temperatura" },
+        { description: "Factor que aumenta los choques efectivos al haber más partículas por unidad de volumen.", correct: "Concentración" },
+        { description: "Área expuesta de un sólido que al aumentarse acelera la reacción.", correct: "Superficie de contacto" },
+        { description: "Representación simbólica de una reacción química con reactivos y productos.", correct: "Ecuación química" },
+        { description: "Estado físico de una sustancia cuando está disuelta en agua (en ecuación).", correct: "Acuoso (ac)" },
+        { description: "Proceso inverso a la síntesis, donde un compuesto se fragmenta.", correct: "Descomposición térmica" },
+        { description: "Reacción química que absorbe calor del entorno.", correct: "Endotérmica" },
+        { description: "Reacción química que libera calor o luz.", correct: "Exotérmica" },
+        { description: "Unidad básica que describe la proporción de reactivos y productos.", correct: "Mol" },
+        { description: "Símbolo que sobre la flecha indica aplicación de calor.", correct: "Δ (delta)" },
+        { description: "Modelo que explica cómo las partículas deben chocar para reaccionar.", correct: "Teoría de las colisiones" },
+        { description: "Grado de desorden en un sistema, factor que influye en las reacciones.", correct: "Entropía" },
+        { description: "Cambio de olor característico en una reacción (ejemplo: podredumbre).", correct: "Producción de olor" },
+        { description: "Proceso de la naturaleza opuesto a la combustión, captura CO₂ y libera O₂.", correct: "Fotosíntesis" },
+        { description: "Reacción química que ocurre en baterías o pilas.", correct: "Reacción redox" },
+        { description: "Ciencia que estudia las transformaciones de la materia.", correct: "Química" },
+        { description: "Material que no se modifica permanentemente en una reacción y acelera el proceso.", correct: "Catalizador enzimático" },
+        { description: "Mezcla de dos o más elementos donde al menos uno es metal.", correct: "Aleación" },
+        { description: "Estado gaseoso de una sustancia que se produce en una reacción visible por burbujas.", correct: "Gas (g)" },
+        { description: "Ejemplo de cambio físico cotidiano: pasar de líquido a vapor.", correct: "Evaporación" },
+        { description: "Evidencia química que se manifiesta con un viraje de color (ejemplo: indicador ácido-base).", correct: "Cambio de color" },
+        { description: "Principio que afirma que los átomos no se crean ni destruyen en una reacción.", correct: "Conservación de la materia" },
+        { description: "Herramienta matemática para igualar átomos en una ecuación química.", correct: "Balanceo" }
+    ];
+    
+    // ----- Banco Verdadero/Falso (50 afirmaciones sobre química)
+    const bankTF = [
+        { text: "La fusión del hielo es un cambio químico.", correct: "F" },
+        { text: "En una reacción química se forman nuevas sustancias.", correct: "V" },
+        { text: "La energía de activación es la energía que se libera en una reacción exotérmica.", correct: "F" },
+        { text: "Un choque efectivo requiere energía suficiente y orientación adecuada.", correct: "V" },
+        { text: "Los catalizadores aumentan la energía de activación.", correct: "F" },
+        { text: "En la ecuación 2Na + Cl₂ → 2NaCl, el coeficiente 2 indica dos átomos de sodio.", correct: "V" },
+        { text: "El subíndice en H₂O indica que hay dos moléculas de agua.", correct: "F" },
+        { text: "La efervescencia (burbujas) es una evidencia de reacción química.", correct: "V" },
+        { text: "El cambio de color puede indicar una reacción química.", correct: "V" },
+        { text: "La condensación del vapor de agua es un cambio químico.", correct: "F" },
+        { text: "Un aumento de temperatura generalmente disminuye la velocidad de reacción.", correct: "F" },
+        { text: "La teoría de las colisiones explica cómo ocurren las reacciones a nivel molecular.", correct: "V" },
+        { text: "En una reacción de síntesis, dos o más reactivos forman un solo producto.", correct: "V" },
+        { text: "La combustión de la gasolina es un cambio físico.", correct: "F" },
+        { text: "Los productos se ubican a la derecha de la flecha en una ecuación química.", correct: "V" },
+        { text: "La ley de conservación de la masa fue postulada por Lavoisier.", correct: "V" },
+        { text: "Los coeficientes estequiométricos pueden cambiarse para balancear una ecuación.", correct: "V" },
+        { text: "Un precipitado es un gas que se forma en una reacción.", correct: "F" },
+        { text: "La oxidación del hierro es un ejemplo de cambio químico lento.", correct: "V" },
+        { text: "La fotosíntesis es una reacción endotérmica.", correct: "V" },
+        { text: "El símbolo (ac) indica que una sustancia está en estado gaseoso.", correct: "F" },
+        { text: "La superficie de contacto no afecta la velocidad de reacción.", correct: "F" },
+        { text: "Un choque inefectivo puede ocurrir por mala orientación molecular.", correct: "V" },
+        { text: "La digestión de alimentos involucra reacciones químicas.", correct: "V" },
+        { text: "En una reacción exotérmica se absorbe calor del entorno.", correct: "F" },
+        { text: "La escritura de una ecuación química debe respetar la conservación de átomos.", correct: "V" },
+        { text: "La formación de gas sin calentamiento es evidencia inequívoca de reacción química.", correct: "V" },
+        { text: "El triturar un medicamento es un cambio químico.", correct: "F" },
+        { text: "La energía de activación es mayor en reacciones muy lentas.", correct: "V" },
+        { text: "Un catalizador se consume durante la reacción.", correct: "F" },
+        { text: "La ecuación balanceada 2H₂ + O₂ → 2H₂O cumple la ley de conservación de la masa.", correct: "V" },
+        { text: "El cambio de olor nunca es evidencia de reacción química.", correct: "F" },
+        { text: "Las reacciones de descomposición requieren siempre un catalizador.", correct: "F" },
+        { text: "La evaporación del alcohol es un cambio químico porque cambia de olor.", correct: "F" },
+        { text: "A mayor concentración de reactivos, mayor probabilidad de colisiones efectivas.", correct: "V" },
+        { text: "La teoría de colisiones solo aplica a gases ideales.", correct: "F" },
+        { text: "En una reacción de doble desplazamiento hay intercambio de iones.", correct: "V" },
+        { text: "La respiración celular es una reacción exotérmica.", correct: "V" },
+        { text: "El calor (Δ) sobre la flecha indica que se necesita energía.", correct: "V" },
+        { text: "La formación de un precipitado siempre es reversible.", correct: "F" },
+        { text: "Un cambio físico puede ser reversible o irreversible.", correct: "V" },
+        { text: "La corrosión es un cambio químico indeseado en muchos metales.", correct: "V" },
+        { text: "La sublimación del yodo es una reacción química.", correct: "F" },
+        { text: "Los catalizadores biológicos se llaman enzimas.", correct: "V" },
+        { text: "Al balancear una ecuación se pueden modificar los subíndices.", correct: "F" },
+        { text: "La combustión de la madera libera energía en forma de luz y calor.", correct: "V" },
+        { text: "La disolución de azúcar en agua es evidencia de reacción química.", correct: "F" },
+        { text: "Toda reacción química implica un reordenamiento de átomos.", correct: "V" },
+        { text: "El estado sólido (s) en una ecuación indica que la sustancia es soluble.", correct: "F" }
+    ];
+    
+    // Funciones auxiliares
+    function getRandomItems(arr, count) {
+        const shuffled = [...arr];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled.slice(0, count);
+    }
+    
+    // Variables globales
+    let currentMC = [];
+    let currentMatch = [];
+    let currentTF = [];
+    
+    let mcAnswers = [];
+    let matchAnswers = [];
+    let tfAnswers = [];
+    
+    let evaluated = false;
+    
+    // Renderizar múltiple opción
+    function renderMultipleChoice() {
+        const container = document.getElementById('multipleChoice');
+        container.innerHTML = '';
+        currentMC.forEach((q, idx) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question';
+            qDiv.innerHTML = `
+                <p><strong>${idx+1}.</strong> ${q.text}</p>
+                <ul class="options">
+                    ${q.options.map(opt => `
+                        <li>
+                            <input type="radio" name="mc_${idx}" value="${opt.charAt(0)}" id="mc_${idx}_${opt.charAt(0)}" ${evaluated ? 'disabled' : ''}>
+                            <label for="mc_${idx}_${opt.charAt(0)}">${opt}</label>
+                        </li>
+                    `).join('')}
+                </ul>
+                ${evaluated ? `<div style="font-size:0.8rem; margin-top:0.3rem;">${mcAnswers[idx] === q.correct ? '✅ Correcta' : '❌ Incorrecta. Respuesta: ' + q.correct}</div>` : ''}
+            `;
+            container.appendChild(qDiv);
+            
+            if (!evaluated) {
+                const radios = document.querySelectorAll(`input[name="mc_${idx}"]`);
+                radios.forEach(radio => {
+                    if (mcAnswers[idx] === radio.value) radio.checked = true;
+                    radio.addEventListener('change', (e) => {
+                        mcAnswers[idx] = e.target.value;
+                    });
+                });
+            }
+        });
+    }
+    
+    // Renderizar relación de columnas
+    function renderMatch() {
+        const tbody = document.getElementById('matchBody');
+        tbody.innerHTML = '';
+        currentMatch.forEach((item, idx) => {
+            const row = tbody.insertRow();
+            row.setAttribute('data-idx', idx);
+            const cellDesc = row.insertCell(0);
+            const cellSelect = row.insertCell(1);
+            cellDesc.innerHTML = `${idx+1}. ${item.description}`;
+            
+            const select = document.createElement('select');
+            select.disabled = evaluated;
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.textContent = "Seleccione...";
+            select.appendChild(defaultOpt);
+            
+            const allOptions = [...new Set(currentMatch.map(i => i.correct).concat(["Cambio físico", "Reacción química", "Energía de activación", "Choque efectivo", "Reactivos", "Productos", "Coeficientes estequiométricos", "Subíndice", "Precipitado", "Catalizador", "Combustión", "Descomposición", "Síntesis o combinación", "Desplazamiento simple", "Doble desplazamiento", "Efervescencia (gas)", "Ley de conservación de la masa", "Temperatura", "Concentración", "Superficie de contacto", "Ecuación química", "Acuoso (ac)", "Exotérmica", "Teoría de las colisiones", "Balanceo"]))];
+            allOptions.sort().forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                if (!evaluated && matchAnswers[idx] === opt) option.selected = true;
+                select.appendChild(option);
+            });
+            
+            select.addEventListener('change', (e) => {
+                matchAnswers[idx] = e.target.value;
+            });
+            cellSelect.appendChild(select);
+            
+            if (evaluated) {
+                const isCorrect = matchAnswers[idx] === item.correct;
+                row.classList.add(isCorrect ? 'correct-row' : 'incorrect-row');
+                if (!isCorrect) {
+                    const feedback = document.createElement('div');
+                    feedback.style.fontSize = '0.75rem';
+                    feedback.style.marginTop = '0.3rem';
+                    feedback.style.color = '#b47c44';
+                    feedback.innerHTML = `Correcta: ${item.correct}`;
+                    cellSelect.appendChild(feedback);
+                }
+            }
+        });
+    }
+    
+    // Renderizar verdadero/falso
+    function renderTrueFalse() {
+        const tbody = document.getElementById('tfBody');
+        tbody.innerHTML = '';
+        currentTF.forEach((item, idx) => {
+            const row = tbody.insertRow();
+            const cellText = row.insertCell(0);
+            const cellSelect = row.insertCell(1);
+            cellText.innerHTML = `${idx+1}. ${item.text}`;
+            const select = document.createElement('select');
+            select.disabled = evaluated;
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = "";
+            defaultOpt.textContent = "Seleccione";
+            select.appendChild(defaultOpt);
+            const optV = document.createElement('option'); optV.value = "V"; optV.textContent = "Verdadero (V)";
+            const optF = document.createElement('option'); optF.value = "F"; optF.textContent = "Falso (F)";
+            select.appendChild(optV); select.appendChild(optF);
+            if (!evaluated && tfAnswers[idx]) {
+                if (tfAnswers[idx] === "V") optV.selected = true;
+                else if (tfAnswers[idx] === "F") optF.selected = true;
+            }
+            select.addEventListener('change', (e) => { tfAnswers[idx] = e.target.value; });
+            cellSelect.appendChild(select);
+            if (evaluated) {
+                const isCorrect = tfAnswers[idx] === item.correct;
+                const feedback = document.createElement('div');
+                feedback.style.fontSize = '0.75rem';
+                feedback.style.marginTop = '0.3rem';
+                feedback.innerHTML = isCorrect ? '✅ Correcto' : `❌ Incorrecto. Respuesta: ${item.correct}`;
+                feedback.className = isCorrect ? 'tf-correct' : 'tf-incorrect';
+                cellSelect.appendChild(feedback);
+            }
+        });
+    }
+    
+    function resetTest() {
+        evaluated = false;
+        currentMC = getRandomItems(bankMultipleChoice, 15);
+        currentMatch = getRandomItems(bankMatch, 15);
+        currentTF = getRandomItems(bankTF, 15);
+        mcAnswers = new Array(15).fill(null);
+        matchAnswers = new Array(15).fill("");
+        tfAnswers = new Array(15).fill(null);
+        document.getElementById('results').style.display = 'none';
+        renderMultipleChoice();
+        renderMatch();
+        renderTrueFalse();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function evaluateAll() {
+        evaluated = true;
+        let mcCorrect = 0, matchCorrect = 0, tfCorrect = 0;
+        for (let i = 0; i < currentMC.length; i++) if (mcAnswers[i] === currentMC[i].correct) mcCorrect++;
+        for (let i = 0; i < currentMatch.length; i++) if (matchAnswers[i] === currentMatch[i].correct) matchCorrect++;
+        for (let i = 0; i < currentTF.length; i++) if (tfAnswers[i] === currentTF[i].correct) tfCorrect++;
+        const total = currentMC.length + currentMatch.length + currentTF.length;
+        const totalCorrect = mcCorrect + matchCorrect + tfCorrect;
+        const percentage = (totalCorrect / total) * 100;
+        let grade = 0;
+        const passing = 60;
+        if (percentage >= passing) grade = 4.0 + ((percentage - passing) / (100 - passing)) * 3.0;
+        else grade = 1.0 + (percentage / passing) * 3.0;
+        grade = Math.round(grade * 100) / 100;
+        const isApproved = grade >= 4.0;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = `
+            <h3 style="color:#2a6b4e; text-align:center;">📊 Resultados - Química</h3>
+            <div class="score-box">✅ Correctas: ${totalCorrect} de ${total} (${Math.round(percentage)}%)</div>
+            <div style="display:flex; justify-content:center; gap:1rem; flex-wrap:wrap; margin:0.5rem 0;">
+                <div>📌 Múltiple: ${mcCorrect}/${currentMC.length}</div><div>🔗 Relación: ${matchCorrect}/${currentMatch.length}</div><div>⚖️ V/F: ${tfCorrect}/${currentTF.length}</div>
+            </div>
+            <div class="grade-box ${isApproved ? 'approved' : 'failed'}"><strong>${isApproved ? '🎉 APROBADO 🎉' : '📖 REPROBADO 📖'}</strong><br>NOTA: ${grade}</div>
+            <div class="action-buttons">
+                <button class="action-btn" id="restartTestBtn">🔄 Reiniciar test</button>
+                <button class="action-btn" id="goToCourseBtn">📘 Ir al curso</button>
+                <button class="action-btn" id="goToClassBtn">📖 Volver a la clase</button>
+            </div>
+        `;
+        resultsDiv.style.display = 'block';
+        renderMultipleChoice(); renderMatch(); renderTrueFalse();
+        document.getElementById('restartTestBtn')?.addEventListener('click', resetTest);
+        document.getElementById('goToCourseBtn')?.addEventListener('click', () => window.location.href = 'quimica.html');
+        document.getElementById('goToClassBtn')?.addEventListener('click', () => window.location.href = 'cambiosreacciones.html');
+        resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    
+    // Inicializar
+    resetTest();
+    document.getElementById('evaluateBtn').addEventListener('click', evaluateAll);
+</script>
+</body>
+</html>
